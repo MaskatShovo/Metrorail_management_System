@@ -546,7 +546,7 @@ function filterTickets() {
 }
 
 function downloadReceipt(ticketId) {
-    // Extract booking ID from ticket ID (remove 'MR' prefix)
+
     const bookingId = ticketId.replace('MR', '');
     window.location.href = `/download_receipt/${bookingId}`;
 }
@@ -567,5 +567,6 @@ document.getElementById('ticketsGrid').style.display = 'none';
 </script>
 </body>
 </html>
+
 
 

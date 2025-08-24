@@ -204,21 +204,3 @@ def get_user_bookings(user_id):
 #             "created_at": str(row[6])  
 #         })
 #     return bookings
-
-
-# def create_feedback(user_id, rating, comment):
-#     cursor = mysql.connection.cursor()
-#     cursor.execute(
-#         """INSERT INTO feedbacks (user_id, rating, comment)
-#            VALUES (%s, %s, %s)""",
-#         (user_id, rating, comment)
-#     )
-#     mysql.connection.commit()
-#     cursor.close()
-
-# def get_feedbacks():
-#     cursor = mysql.connection.cursor()
-#     cursor.execute("SELECT * FROM feedbacks")
-#     rows = cursor.fetchall()
-#     cursor.close()
-#     return rows

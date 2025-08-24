@@ -303,17 +303,4 @@ def ticket_history():
 #     bookings = get_bookings()
 #     return jsonify({"bookings": bookings})
 
-# # Feature 2: Feedback
-# @main_routes.route("/api/feedback", methods=["POST"])
-# def give_feedback():
-#     data = request.json
-#     try:
-#         create_feedback(data["user_id"], data["rating"], data["comment"])
-#         return jsonify({"message": "Feedback submitted"}), 201
-#     except Exception as e:
-#         return jsonify({"error": str(e)}), 500
 
-# @main_routes.route("/api/feedbacks", methods=["GET"])
-# def view_feedbacks():
-#     feedbacks = get_feedbacks()
-#     return jsonify({"feedbacks": feedbacks})

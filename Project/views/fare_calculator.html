@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fare Calculator - Metro Rail Management System</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+    
+    :root {
+      --bg: #f8fafc;
+      --text: #1e293b;
+      --muted: #64748b;
+      --brand: #059669;
+      --brand-600: #047857;
+      --brand-light: #d1fae5;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --warn: #f59e0b;
+      --good: #10b981;
+      --accent: #ef4444;
+      --gradient-start: #059669;
+      --gradient-end: #34d399;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+      opacity: 0.03;
+      z-index: -1;
+    }
+    
+    header {
+      background: var(--surface);
+      padding: 15px 30px;
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .logo {
+      height: 40px;
+      width: auto;
+    }
+    
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    nav a {
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 600;
+      margin-left: 30px;
+      padding: 8px 16px;
+      border-radius: 25px;
+      transition: all 0.3s ease;
+    }
+    
+    nav a:hover {
+      color: var(--brand);
+      background: var(--brand-light);
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 30px;
+    }
+    
+    .page-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .page-subtitle {
+      text-align: center;
+      color: var(--muted);
+      margin-bottom: 40px;
+      font-size: 1.1rem;
+    }
+    
+    .calculator-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      align-items: start;
+    }
+    
+    .calculator-form {
+      background: var(--surface);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      border: 1px solid var(--border);
+    }
+    
+    .form-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 25px;
+      color: var(--brand);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    
+    select, input {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: var(--surface);
+      color: var(--text);
+    }
+    
+    select:focus, input:focus {
+      outline: none;
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(5,150,105,0.1);
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: linear-gradient(135deg, var(--brand), var(--brand-600));
+      color: white;
+      box-shadow: 0 8px 25px rgba(5,150,105,0.3);
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(5,150,105,0.4);
+    }
+    
+    .results-panel {
+      background: var(--surface);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      border: 1px solid var(--border);
+      position: sticky;
+      top: 100px;
+    }
+    
+    .results-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 25px;
+      color: var(--brand);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .fare-display {
+      background: linear-gradient(135deg, var(--brand-light), var(--surface));
+      padding: 25px;
+      border-radius: 15px;
+      text-align: center;
+      margin-bottom: 25px;
+      border: 2px solid var(--brand);
+    }
+    
+    .fare-amount {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--brand);
+      margin-bottom: 5px;
+    }
+    
+    .fare-label {
+      color: var(--muted);
+      font-size: 1rem;
+      margin-bottom: 15px;
+    }
+    
+    .journey-details {
+      background: var(--bg);
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .journey-route {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+    
+    .station-info {
+      text-align: center;
+      flex: 1;
+    }
+    
+    .station-name {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 5px;
+    }
+    
+    .route-arrow {
+      font-size: 1.5rem;
+      color: var(--brand);
+      margin: 0 20px;
+    }
+    
+    .fare-breakdown {
+      margin-top: 20px;
+    }
+    
+    .breakdown-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .breakdown-item:last-child {
+      border-bottom: none;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: var(--brand);
+    }
+    
+    .fare-chart {
+      background: var(--surface);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      border: 1px solid var(--border);
+      margin-top: 30px;
+      grid-column: 1 / -1;
+    }
+    
+    .chart-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 25px;
+      color: var(--brand);
+      text-align: center;
+    }
+    
+    .fare-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    
+    .fare-table th,
+    .fare-table td {
+      padding: 12px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+    
+    .fare-table th {
+      background: var(--brand-light);
+      font-weight: 600;
+      color: var(--brand);
+    }
+    
+    .fare-table tr:nth-child(even) {
+      background: var(--bg);
+    }
+    
+    .empty-results {
+      text-align: center;
+      color: var(--muted);
+      padding: 40px 20px;
+    }
+    
+    .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 15px;
+    }
+    
+    @media (max-width: 768px) {
+      .calculator-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .results-panel {
+        position: static;
+      }
+      
+      .journey-route {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .route-arrow {
+        transform: rotate(90deg);
+        margin: 10px 0;
+      }
+      
+      .fare-table {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo-section">
+        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-RCmcphX4mo26kjSE8kGXPrxOFmO8sM.png" alt="Metro Rail Logo" class="logo">
+        <div class="logo-text">🚊 MetroRail</div>
+      </div>
+      <nav>
+        <a href="index.html">🏠 Home</a>
+        <a href="book-tickets.html">🎫 Book</a>
+        <a href="ticket-history.html">📊 History</a>
+        <a href="schedules.html">📅 Schedules</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1 class="page-title">💰 Fare Calculator</h1>
+    <p class="page-subtitle">Calculate fares instantly between Dhaka Metro Rail MRT Line 6 stations</p>
+
+    <div class="calculator-container">
+      <div class="calculator-form">
+        <h3 class="form-title">🎯 Journey Details</h3>
+        
+        <div class="form-group">
+          <label for="fromStation">From Station</label>
+          <select id="fromStation" onchange="calculateFare()">
+            <option value="">Select Source Station</option>
+            <option value="uttara-north">Uttara North</option>
+            <option value="uttara-center">Uttara Center</option>
+            <option value="uttara-south">Uttara South</option>
+            <option value="pallabi">Pallabi</option>
+            <option value="mirpur-11">Mirpur 11</option>
+            <option value="mirpur-10">Mirpur 10</option>
+            <option value="kazipara">Kazipara</option>
+            <option value="shewrapara">Shewrapara</option>
+            <option value="agargaon">Agargaon</option>
+            <option value="bijoy-sarani">Bijoy Sarani</option>
+            <option value="farmgate">Farmgate</option>
+            <option value="karwan-bazar">Karwan Bazar</option>
+            <option value="shahbagh">Shahbagh</option>
+            <option value="dhaka-university">Dhaka University</option>
+            <option value="bangladesh-secretariat">Bangladesh Secretariat</option>
+            <option value="motijheel">Motijheel</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="toStation">To Station</label>
+          <select id="toStation" onchange="calculateFare()">
+            <option value="">Select Destination Station</option>
+            <option value="uttara-north">Uttara North</option>
+            <option value="uttara-center">Uttara Center</option>
+            <option value="uttara-south">Uttara South</option>
+            <option value="pallabi">Pallabi</option>
+            <option value="mirpur-11">Mirpur 11</option>
+            <option value="mirpur-10">Mirpur 10</option>
+            <option value="kazipara">Kazipara</option>
+            <option value="shewrapara">Shewrapara</option>
+            <option value="agargaon">Agargaon</option>
+            <option value="bijoy-sarani">Bijoy Sarani</option>
+            <option value="farmgate">Farmgate</option>
+            <option value="karwan-bazar">Karwan Bazar</option>
+            <option value="shahbagh">Shahbagh</option>
+            <option value="dhaka-university">Dhaka University</option>
+            <option value="bangladesh-secretariat">Bangladesh Secretariat</option>
+            <option value="motijheel">Motijheel</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="passengers">Number of Passengers</label>
+          <select id="passengers" onchange="calculateFare()">
+            <option value="1">1 Passenger</option>
+            <option value="2">2 Passengers</option>
+            <option value="3">3 Passengers</option>
+            <option value="4">4 Passengers</option>
+            <option value="5">5+ Passengers</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="travelClass">Travel Class</label>
+          <select id="travelClass" onchange="calculateFare()">
+            <option value="standard">Standard Class</option>
+            <option value="premium">Premium Class</option>
+            <option value="first">First Class</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="ticketType">Ticket Type</label>
+          <select id="ticketType" onchange="calculateFare()">
+            <option value="single">Single Journey</option>
+            <option value="return">Return Journey</option>
+          </select>
+        </div>
+
+        <button class="btn" onclick="calculateFare()">💰 Calculate Fare</button>
+      </div>
+
+      <div class="results-panel">
+        <h3 class="results-title">📊 Fare Results</h3>
+        
+        <div id="fareResults" class="empty-results">
+          <div class="empty-icon">🎫</div>
+          <p>Select stations to calculate fare</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="fare-chart">
+      <h3 class="chart-title">📋 Fare Chart (Standard Class - Single Journey)</h3>
+      <table class="fare-table">
+        <thead>
+          <tr>
+            <th>From / To</th>
+            <th>Uttara North</th>
+            <th>Farmgate</th>
+            <th>Shahbagh</th>
+            <th>Dhaka University</th>
+            <th>Secretariat</th>
+            <th>Motijheel</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>Uttara North</th>
+            <td>-</td>
+            <td>৳60</td>
+            <td>৳80</td>
+            <td>৳90</td>
+            <td>৳100</td>
+            <td>৳110</td>
+          </tr>
+          <tr>
+            <th>Farmgate</th>
+            <td>৳60</td>
+            <td>-</td>
+            <td>৳20</td>
+            <td>৳30</td>
+            <td>৳40</td>
+            <td>৳50</td>
+          </tr>
+          <tr>
+            <th>Shahbagh</th>
+            <td>৳80</td>
+            <td>৳20</td>
+            <td>-</td>
+            <td>৳20</td>
+            <td>৳30</td>
+            <td>৳40</td>
+          </tr>
+          <tr>
+            <th>Dhaka University</th>
+            <td>৳90</td>
+            <td>৳30</td>
+            <td>৳20</td>
+            <td>-</td>
+            <td>৳20</td>
+            <td>৳30</td>
+          </tr>
+          <tr>
+            <th>Bangladesh Secretariat</th>
+            <td>৳100</td>
+            <td>৳40</td>
+            <td>৳30</td>
+            <td>৳20</td>
+            <td>-</td>
+            <td>৳20</td>
+          </tr>
+          <tr>
+            <th>Motijheel</th>
+            <td>৳110</td>
+            <td>৳50</td>
+            <td>৳40</td>
+            <td>৳30</td>
+            <td>৳20</td>
+            <td>-</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const stations = {
+      'uttara-north': 'Uttara North',
+      'uttara-center': 'Uttara Center',
+      'uttara-south': 'Uttara South',
+      'pallabi': 'Pallabi',
+      'mirpur-11': 'Mirpur 11',
+      'mirpur-10': 'Mirpur 10',
+      'kazipara': 'Kazipara',
+      'shewrapara': 'Shewrapara',
+      'agargaon': 'Agargaon',
+      'bijoy-sarani': 'Bijoy Sarani',
+      'farmgate': 'Farmgate',
+      'karwan-bazar': 'Karwan Bazar',
+      'shahbagh': 'Shahbagh',
+      'dhaka-university': 'Dhaka University',
+      'bangladesh-secretariat': 'Bangladesh Secretariat',
+      'motijheel': 'Motijheel'
+    };
+
+    const baseFares = {
+      'standard': 20,
+      'premium': 35,
+      'first': 50
+    };
+
+    function getStationIndex(station) {
+      const stationOrder = [
+        'uttara-north', 'uttara-center', 'uttara-south', 'pallabi', 'mirpur-11', 'mirpur-10',
+        'kazipara', 'shewrapara', 'agargaon', 'bijoy-sarani', 'farmgate', 'karwan-bazar',
+        'shahbagh', 'dhaka-university', 'bangladesh-secretariat', 'motijheel'
+      ];
+      return stationOrder.indexOf(station);
+    }
+
+    function calculateFare() {
+      const fromStation = document.getElementById('fromStation').value;
+      const toStation = document.getElementById('toStation').value;
+      const passengers = parseInt(document.getElementById('passengers').value);
+      const travelClass = document.getElementById('travelClass').value;
+      const ticketType = document.getElementById('ticketType').value;
+      
+      const resultsDiv = document.getElementById('fareResults');
+      
+      if (!fromStation || !toStation) {
+        resultsDiv.innerHTML = `
+          <div class="empty-results">
+            <div class="empty-icon">🎫</div>
+            <p>Select both stations to calculate fare</p>
+          </div>
+        `;
+        return;
+      }
+      
+      if (fromStation === toStation) {
+        resultsDiv.innerHTML = `
+          <div class="empty-results">
+            <div class="empty-icon">⚠️</div>
+            <p>Source and destination cannot be the same</p>
+          </div>
+        `;
+        return;
+      }
+      
+      // Calculate distance-based fare
+      const distance = Math.abs(getStationIndex(fromStation) - getStationIndex(toStation));
+      const baseFare = baseFares[travelClass] * distance;
+      let totalFare = baseFare * passengers;
+      
+      // Apply return discount
+      if (ticketType === 'return') {
+        totalFare *= 1.8; // 10% discount on return
+      }
+      
+      // Calculate breakdown
+      const singleFare = baseFare;
+      const classMultiplier = baseFares[travelClass] / baseFares['standard'];
+      
+      resultsDiv.innerHTML = `
+        <div class="fare-display">
+          <div class="fare-amount">৳${totalFare}</div>
+          <div class="fare-label">Total Fare for ${passengers} passenger${passengers > 1 ? 's' : ''}</div>
+        </div>
+        
+        <div class="journey-details">
+          <div class="journey-route">
+            <div class="station-info">
+              <div class="station-name">${stations[fromStation]}</div>
+            </div>
+            <div class="route-arrow">→</div>
+            <div class="station-info">
+              <div class="station-name">${stations[toStation]}</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="fare-breakdown">
+          <div class="breakdown-item">
+            <span>Base Fare (Standard)</span>
+            <span>৳${baseFares['standard'] * distance}</span>
+          </div>
+          <div class="breakdown-item">
+            <span>${travelClass.charAt(0).toUpperCase() + travelClass.slice(1)} Class</span>
+            <span>×${classMultiplier}</span>
+          </div>
+          <div class="breakdown-item">
+            <span>Passengers</span>
+            <span>×${passengers}</span>
+          </div>
+          ${ticketType === 'return' ? `
+            <div class="breakdown-item">
+              <span>Return Journey (10% off)</span>
+              <span>×1.8</span>
+            </div>
+          ` : ''}
+          <div class="breakdown-item">
+            <span>Total Amount</span>
+            <span>৳${totalFare}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    // Initialize with default calculation if stations are selected
+    document.addEventListener('DOMContentLoaded', function() {
+      calculateFare();
+    });
+  </script>
+</body>
+</html>

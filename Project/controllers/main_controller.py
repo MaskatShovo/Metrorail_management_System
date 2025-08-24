@@ -364,7 +364,7 @@ def create_ticket_receipt_pdf(booking_data, user_data):
     buffer.seek(0)
     return buffer
 
-# Add this route to your main_controller.py
+
 @main_routes.route("/download_receipt/<int:booking_id>")
 def download_receipt(booking_id):
     if "user" not in session:
@@ -373,7 +373,7 @@ def download_receipt(booking_id):
     
     user_id = session["user"]["id"]
     
-    # Get booking data
+
     booking = get_booking_by_id(booking_id, user_id)
     
     if not booking:

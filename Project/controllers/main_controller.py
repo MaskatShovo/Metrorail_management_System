@@ -334,13 +334,12 @@ def create_ticket_receipt_pdf(booking_data, user_data):
     
     story.append(Paragraph("Scan QR Code for Verification", qr_style))
     
-    # Add QR code image
+
     qr_img = Image(qr_buffer, width=1.5*inch, height=1.5*inch)
     qr_img.hAlign = 'CENTER'
     story.append(qr_img)
     story.append(Spacer(1, 20))
-    
-    # Footer
+
     footer_style = ParagraphStyle(
         'FooterStyle',
         parent=styles['Normal'],
@@ -358,8 +357,7 @@ def create_ticket_receipt_pdf(booking_data, user_data):
     """
     
     story.append(Paragraph(footer_text, footer_style))
-    
-    # Build PDF
+
     doc.build(story)
     buffer.seek(0)
     return buffer

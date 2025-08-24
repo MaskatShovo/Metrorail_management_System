@@ -174,33 +174,3 @@ def get_user_bookings(user_id):
 
 
 
-# ///////////////////////////////////
-# def create_booking(user_id, route, date, time, seat_no):
-#     cursor = mysql.connection.cursor()
-#     cursor.execute(
-#         """INSERT INTO bookings (user_id, route, date, time, seat_no)
-#            VALUES (%s, %s, %s, %s, %s)""",
-#         (user_id, route, date, time, seat_no)
-#     )
-#     mysql.connection.commit()
-#     cursor.close()
-
-# def get_bookings():
-#     cursor = mysql.connection.cursor()
-#     cursor.execute("SELECT * FROM bookings")
-#     rows = cursor.fetchall()
-#     cursor.close()
-
-    
-#     bookings = []
-#     for row in rows:
-#         bookings.append({
-#             "id": row[0],
-#             "user_id": row[1],
-#             "route": row[2],
-#             "date": str(row[3]),      
-#             "time": str(row[4]),      
-#             "seat_no": row[5],
-#             "created_at": str(row[6])  
-#         })
-#     return bookings

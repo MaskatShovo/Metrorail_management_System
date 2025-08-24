@@ -523,8 +523,7 @@ function filterTickets() {
   if (status) {
     filtered = filtered.filter(ticket => ticket.status === status);
   }
-  
-  // Hide/show tickets based on filter
+
   const ticketCards = document.querySelectorAll('.ticket-card');
   const emptyState = document.getElementById('emptyState');
   let visibleCount = 0;
@@ -567,6 +566,7 @@ document.getElementById('ticketsGrid').style.display = 'none';
 </script>
 </body>
 </html>
+
 
 
 

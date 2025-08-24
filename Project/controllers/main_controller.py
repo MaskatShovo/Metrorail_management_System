@@ -162,7 +162,13 @@ def delete_profile():
         flash(f"Failed to delete profile: {e}", "error")
         return redirect(url_for("main_routes.userpage"))
 
+@main_routes.route("/fare_calculator")
+def fare_calculator():
+    return render_template("fare_calculator.html")
 
+@main_routes.route("/train_schedule")
+def train_schedule():
+    return render_template("train_schedule.html")
 
 
 

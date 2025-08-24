@@ -78,7 +78,21 @@ def delete_user(user_id):
     cursor.close()
 
 
-
+def get_user_bookings(user_id):
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        SELECT id, user_id, ticket_type, source, destination, departure_date, 
+               return_date, passengers, class, created_at
+        FROM bookings 
+        WHERE user_id = %s 
+        ORDER BY created_at DESC
+        """,
+        (user_id,)
+    )
+    bookings = cursor.fetchall()
+    cursor.close()
+    return bookings
 
 
 

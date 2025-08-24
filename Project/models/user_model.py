@@ -95,7 +95,20 @@ def get_user_bookings(user_id):
     return bookings
 
 
-
+def get_booking_by_id(booking_id, user_id):
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        SELECT id, ticket_type, source, destination, departure_date, 
+               return_date, passengers, class, created_at
+        FROM bookings 
+        WHERE id = %s AND user_id = %s
+        """,
+        (booking_id, user_id)
+    )
+    booking = cursor.fetchone()
+    cursor.close()
+    return booking
 
 
 

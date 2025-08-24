@@ -211,6 +211,218 @@ def ticket_history():
     return render_template("ticket_history.html", bookings=processed_bookings)
 
 
+def generate_qr_code(data):
+    """Generate QR code and return as image buffer"""
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(data)
+    qr.make(fit=True)
+    
+    img = qr.make_image(fill_color="black", back_color="white")
+    
+    # Convert to buffer
+    buffer = io.BytesIO()
+    img.save(buffer, format='PNG')
+    buffer.seek(0)
+    return buffer
+
+def create_ticket_receipt_pdf(booking_data, user_data):
+    """Create a bus ticket style PDF receipt"""
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4, 
+                          rightMargin=0.5*inch, leftMargin=0.5*inch,
+                          topMargin=0.5*inch, bottomMargin=0.5*inch)
+    
+    styles = getSampleStyleSheet()
+    story = []
+    
+    # Custom styles
+    title_style = ParagraphStyle(
+        'CustomTitle',
+        parent=styles['Heading1'],
+        fontSize=24,
+        textColor=colors.HexColor('#059669'),
+        alignment=TA_CENTER,
+        spaceAfter=20,
+        fontName='Helvetica-Bold'
+    )
+    
+    header_style = ParagraphStyle(
+        'HeaderStyle',
+        parent=styles['Normal'],
+        fontSize=14,
+        textColor=colors.HexColor('#047857'),
+        alignment=TA_CENTER,
+        spaceAfter=10,
+        fontName='Helvetica-Bold'
+    )
+    
+    # Header
+    story.append(Paragraph("🚊 DHAKA METRO RAIL", title_style))
+    story.append(Paragraph("OFFICIAL TICKET RECEIPT", header_style))
+    story.append(Spacer(1, 20))
+    
+    # Ticket Information Table
+    ticket_data = [
+        ['TICKET DETAILS', ''],
+        ['Ticket ID:', f"MR{booking_data['id']}"],
+        ['Passenger Name:', user_data['name']],
+        ['National ID:', user_data['nid']],
+        ['Email:', user_data['email']],
+        ['', ''],
+        ['JOURNEY INFORMATION', ''],
+        ['From Station:', booking_data['source']],
+        ['To Station:', booking_data['destination']],
+        ['Departure Date:', booking_data['departure_date'].strftime('%B %d, %Y') if booking_data['departure_date'] else 'N/A'],
+        ['Return Date:', booking_data['return_date'].strftime('%B %d, %Y') if booking_data.get('return_date') else 'One Way'],
+        ['Ticket Type:', booking_data['ticket_type'].title()],
+        ['Travel Class:', booking_data['travel_class']],
+        ['Passengers:', str(booking_data['passengers'])],
+        ['', ''],
+        ['PAYMENT INFORMATION', ''],
+        ['Fare Amount:', f"৳{booking_data['fare']}"],
+        ['Status:', booking_data['status'].title()],
+        ['Booking Date:', booking_data['booking_date'].strftime('%B %d, %Y at %I:%M %p')],
+    ]
+    
+    # Create table
+    table = Table(ticket_data, colWidths=[2.5*inch, 3*inch])
+    table.setStyle(TableStyle([
+        # Header rows styling
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#059669')),
+        ('BACKGROUND', (0, 6), (-1, 6), colors.HexColor('#059669')),
+        ('BACKGROUND', (0, 15), (-1, 15), colors.HexColor('#059669')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('TEXTCOLOR', (0, 6), (-1, 6), colors.whitesmoke),
+        ('TEXTCOLOR', (0, 15), (-1, 15), colors.whitesmoke),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTNAME', (0, 6), (-1, 6), 'Helvetica-Bold'),
+        ('FONTNAME', (0, 15), (-1, 15), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 12),
+        ('FONTSIZE', (0, 6), (-1, 6), 12),
+        ('FONTSIZE', (0, 15), (-1, 15), 12),
+        
+        # Data styling
+        ('FONTNAME', (0, 1), (0, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 1), (-1, -1), 10),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('GRID', (0, 0), (-1, -1), 1, colors.grey),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor('#f8fafc')])
+    ]))
+    
+    story.append(table)
+    story.append(Spacer(1, 30))
+    
+    # Generate QR Code
+    qr_data = f"MR{booking_data['id']}|{user_data['name']}|{booking_data['source']}|{booking_data['destination']}|{booking_data['fare']}"
+    qr_buffer = generate_qr_code(qr_data)
+    
+    # Create QR code section
+    qr_style = ParagraphStyle(
+        'QRStyle',
+        parent=styles['Normal'],
+        fontSize=12,
+        alignment=TA_CENTER,
+        spaceAfter=10,
+        fontName='Helvetica-Bold'
+    )
+    
+    story.append(Paragraph("Scan QR Code for Verification", qr_style))
+    
+    # Add QR code image
+    qr_img = Image(qr_buffer, width=1.5*inch, height=1.5*inch)
+    qr_img.hAlign = 'CENTER'
+    story.append(qr_img)
+    story.append(Spacer(1, 20))
+    
+    # Footer
+    footer_style = ParagraphStyle(
+        'FooterStyle',
+        parent=styles['Normal'],
+        fontSize=8,
+        alignment=TA_CENTER,
+        textColor=colors.grey,
+        fontName='Helvetica'
+    )
+    
+    footer_text = f"""
+    Generated on {datetime.now().strftime('%B %d, %Y at %I:%M %p')}<br/>
+    This is a computer-generated receipt. No signature required.<br/>
+    For support, contact: support@dhakaMetrorail.gov.bd | +880-2-XXXXXXXX<br/>
+    Thank you for choosing Dhaka Metro Rail!
+    """
+    
+    story.append(Paragraph(footer_text, footer_style))
+    
+    # Build PDF
+    doc.build(story)
+    buffer.seek(0)
+    return buffer
+
+# Add this route to your main_controller.py
+@main_routes.route("/download_receipt/<int:booking_id>")
+def download_receipt(booking_id):
+    if "user" not in session:
+        flash("Please log in first", "error")
+        return redirect(url_for("main_routes.login"))
+    
+    user_id = session["user"]["id"]
+    
+    # Get booking data
+    booking = get_booking_by_id(booking_id, user_id)
+    
+    if not booking:
+        flash("Ticket not found", "error")
+        return redirect(url_for("main_routes.ticket_history"))
+    
+    # Get user data
+    user_data = session["user"]
+    
+    # Process booking data
+    from datetime import datetime, date
+    
+    departure_date = booking[4]
+    if isinstance(departure_date, str):
+        departure_date = datetime.strptime(departure_date, '%Y-%m-%d').date()
+    
+    return_date = booking[5]
+    if return_date and isinstance(return_date, str):
+        return_date = datetime.strptime(return_date, '%Y-%m-%d').date()
+    
+    status = 'upcoming' if departure_date > date.today() else 'completed'
+    
+    # Calculate fare
+    base_fare = {'Standard': 20, 'Premium': 30, 'First': 40}.get(booking[7], 20)
+    fare = int(base_fare * 1.5 * int(booking[6]))
+    
+    booking_data = {
+        'id': booking[0],
+        'ticket_type': booking[1],
+        'source': booking[2],
+        'destination': booking[3],
+        'departure_date': departure_date,
+        'return_date': return_date,
+        'passengers': booking[6],
+        'travel_class': booking[7],
+        'booking_date': booking[8],
+        'status': status,
+        'fare': fare
+    }
+    
+    # Generate PDF
+    pdf_buffer = create_ticket_receipt_pdf(booking_data, user_data)
+    
+    return send_file(
+        pdf_buffer,
+        as_attachment=True,
+        download_name=f'MetroRail_Receipt_MR{booking_id}.pdf',
+        mimetype='application/pdf'
+    )
 
 
 

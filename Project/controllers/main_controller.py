@@ -286,21 +286,4 @@ def ticket_history():
 
 
 
-# @main_routes.route("/api/book", methods=["POST"])
-# def book_ticket():
-#     data = request.json
-#     try:
-#         create_booking(
-#             data["user_id"], data["route"], data["date"],
-#             data["time"], data["seat_no"]
-#         )
-#         return jsonify({"message": "Booking successful"}), 201
-#     except Exception as e:
-#         return jsonify({"error": str(e)}), 500
-
-# @main_routes.route("/api/bookings", methods=["GET"])
-# def view_bookings():
-#     bookings = get_bookings()
-#     return jsonify({"bookings": bookings})
-
 

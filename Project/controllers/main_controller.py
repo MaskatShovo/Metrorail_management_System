@@ -170,7 +170,46 @@ def fare_calculator():
 def train_schedule():
     return render_template("train_schedule.html")
 
+@main_routes.route("/ticket_history")
+def ticket_history():
+    if "user" not in session:
+        flash("Please log in first", "error")
+        return redirect(url_for("main_routes.login"))
 
+    user_id = session["user"]["id"]
+    bookings = get_user_bookings(user_id)
+
+    processed_bookings = []
+    for booking in bookings:
+        from datetime import datetime, date
+
+
+        if isinstance(booking[5], str):
+            departure_date = datetime.strptime(booking[5], '%Y-%m-%d').date()
+        else:
+            departure_date = booking[5]
+
+        status = 'upcoming' if departure_date > date.today() else 'completed'
+
+Calculate fare,
+        base_fare = {'Standard': 20, 'Premium': 30, 'First': 40}.get(booking[8], 20)
+        fare = int(base_fare * 1.5 * int(booking[7]))
+
+        processed_bookings.append({
+            'id': booking[0],
+            'ticket_type': booking[2],
+            'source': booking[3],
+            'destination': booking[4],
+            'departure_date': booking[5],
+            'return_date': booking[6],
+            'passengers': booking[7],
+            'travel_class': booking[8],
+            'booking_date': booking[9],
+            'status': status,
+            'fare': fare
+        })
+
+    return render_template("ticket_history.html", bookings=processed_bookings)
 
 
 

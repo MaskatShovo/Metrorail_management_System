@@ -380,10 +380,10 @@ def download_receipt(booking_id):
         flash("Ticket not found", "error")
         return redirect(url_for("main_routes.ticket_history"))
     
-    # Get user data
+ 
     user_data = session["user"]
     
-    # Process booking data
+
     from datetime import datetime, date
     
     departure_date = booking[4]

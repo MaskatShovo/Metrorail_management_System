@@ -555,7 +555,7 @@ function cancelTicket(ticketId) {
   if (confirm(`Are you sure you want to cancel ticket ${ticketId}?\n\nThis action cannot be undone.`)) {
 
     alert(`✅ Ticket ${ticketId} has been cancelled successfully.\n\nRefund will be processed within 3-5 business days.`);
-    location.reload(); // Reload page to reflect changes
+    location.reload(); 
   }
 }
 
@@ -567,6 +567,7 @@ document.getElementById('ticketsGrid').style.display = 'none';
 </script>
 </body>
 </html>
+
 
 
 

@@ -592,13 +592,13 @@
     function showRoute(route) {
       currentRoute = route;
       
-      // Update active tab
+     
       document.querySelectorAll('.route-tab').forEach(tab => {
         tab.classList.remove('active');
       });
       event.target.classList.add('active');
       
-      // Filter and display schedules
+      
       let filteredData = scheduleData;
       if (route !== 'all') {
         filteredData = scheduleData.filter(r => r.route === route);
@@ -614,12 +614,12 @@
       
       let filteredData = scheduleData;
       
-      // Filter by route
+      
       if (routeFilter) {
         filteredData = filteredData.filter(r => r.route === routeFilter);
       }
       
-      // Filter by time and status
+      
       filteredData = filteredData.map(route => {
         let filteredTimes = route.times;
         
@@ -646,14 +646,14 @@
     }
 
     function refreshSchedules() {
-      // Simulate refresh with loading
+      
       const grid = document.getElementById('scheduleGrid');
       grid.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--muted);">🔄 Refreshing schedules...</div>';
       
       setTimeout(() => {
         renderSchedules(scheduleData);
         
-        // Update live updates
+        
         const updates = document.getElementById('liveUpdates');
         const currentTime = new Date().toLocaleTimeString('en-US', { 
           hour12: false, 
@@ -671,11 +671,11 @@
       }, 1000);
     }
 
-    // Initialize page
+    
     document.addEventListener('DOMContentLoaded', function() {
       renderSchedules(scheduleData);
       
-      // Auto-refresh every 30 seconds
+      
       setInterval(() => {
         if (Math.random() > 0.7) { // 30% chance of update
           refreshSchedules();
@@ -685,3 +685,4 @@
   </script>
 </body>
 </html>
+

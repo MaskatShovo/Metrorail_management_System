@@ -191,7 +191,6 @@ def ticket_history():
 
         status = 'upcoming' if departure_date > date.today() else 'completed'
 
-Calculate fare,
         base_fare = {'Standard': 20, 'Premium': 30, 'First': 40}.get(booking[8], 20)
         fare = int(base_fare * 1.5 * int(booking[7]))
 

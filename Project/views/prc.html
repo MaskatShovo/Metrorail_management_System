@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Update Profile — MetroRail</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;margin:0;background:#f6f7fb;color:#0f172a}
+    .container{max-width:760px;margin:40px auto;padding:0 16px}
+    .card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:18px}
+    h1{font-size:22px;margin:0 0 14px}
+    label{display:block;font-weight:600;margin:12px 0 6px}
+    input{width:100%;padding:10px;border:1px solid #e5e7eb;border-radius:8px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:680px){.row{grid-template-columns:1fr}}
+    .actions{display:flex;gap:10px;margin-top:16px}
+    .btn{padding:10px 14px;border-radius:10px;border:1px solid #d1d5db;background:#0aa36c;color:#fff;font-weight:700;cursor:pointer}
+    .btn.light{background:#fff;color:#111}
+    .btn.danger{background:#e11d48;border-color:#e11d48}
+    .link{display:inline-block;margin-top:16px}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>Update Profile</h1>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div>{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+<form method="post" action="{{ url_for('main_routes.update_profile') }}">
+  <label>👤 Name</label>
+  <input type="text" name="name" value="{{ user.name }}" required>
+
+  <label>🆔 National ID</label>
+  <input type="text" name="nid" value="{{ user.nid }}" required>
+
+  <label>📧 Email</label>
+  <input type="email" name="email" value="{{ user.email }}" required>
+
+  <label>🔒 New Password</label>
+  <input type="password" name="password" placeholder="Leave blank to keep current">
+
+  <label>🔒 Confirm New Password</label>
+  <input type="password" name="confirm_password" placeholder="Leave blank to keep current">
+
+  <div style="margin-top: 12px;">
+    <button type="submit" name="action" value="update">✏️ Update Information</button>
+    <button type="submit" name="action" value="delete" onclick="return confirm('Delete your profile? This cannot be undone.');">🗑️ Delete Profile</button>
+  </div>
+</form>
+
+<p style="margin-top:16px;">
+  <a href="{{ url_for('main_routes.userpage') }}">⬅️ Back to My Profile</a>
+</p>
+
+      <a class="link" href="{{ url_for('main_routes.userpage') }}">← Back to Dashboard</a>
+    </div>
+  </div>
+</body>
+</html>

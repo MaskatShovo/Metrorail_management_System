@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Metro Rail - Profile Management</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+    
+    :root {
+      --bg: #f8fafc;
+      --text: #1e293b;
+      --muted: #64748b;
+      --brand: #059669;
+      --brand-600: #047857;
+      --brand-light: #d1fae5;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --warn: #f59e0b;
+      --good: #10b981;
+      --accent: #ef4444;
+      --gradient-start: #059669;
+      --gradient-end: #34d399;
+    }
+    
+    html[data-theme="dark"] {
+      --bg: #0f172a;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --brand: #34d399;
+      --brand-600: #10b981;
+      --brand-light: #064e3b;
+      --surface: #1e293b;
+      --border: #334155;
+      --warn: #fbbf24;
+      --good: #34d399;
+      --accent: #f87171;
+      --gradient-start: #34d399;
+      --gradient-end: #059669;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+ 
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+      opacity: 0.03;
+      z-index: -1;
+      animation: gradientShift 8s ease-in-out infinite alternate;
+    }
+    
+    @keyframes gradientShift {
+      0% { transform: translateX(-50px) translateY(-30px) rotate(0deg); }
+      100% { transform: translateX(50px) translateY(30px) rotate(2deg); }
+    }
+    
+
+    header {
+      background: var(--surface);
+      padding: 15px 30px;
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+      backdrop-filter: blur(10px);
+    }
+    
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .logo-section img {
+      height: 50px;
+      width: auto;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.1));
+      animation: logoFloat 3s ease-in-out infinite;
+    }
+    
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+    }
+    
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .back-btn {
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 8px 16px;
+      border-radius: 25px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .back-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    .back-btn:hover {
+      color: var(--brand);
+      background: var(--brand-light);
+      transform: translateY(-2px);
+    }
+    
+    .back-btn:hover::before {
+      left: 100%;
+    }
+    
+  
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 30px;
+    }
+    
+    .signup-container {
+      background: var(--surface);
+      padding: 60px 40px;
+      border-radius: 20px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    
+    .signup-container::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(5,150,105,0.05) 0%, transparent 70%);
+      animation: containerRotate 20s linear infinite;
+    }
+    
+    @keyframes containerRotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .signup-content {
+      position: relative;
+      z-index: 2;
+    }
+    
+    .signup-title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 15px;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: titlePulse 2s ease-in-out infinite alternate;
+      text-align: center;
+    }
+    
+    @keyframes titlePulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.02); }
+    }
+    
+    .signup-subtitle {
+      font-size: 1.1rem;
+      color: var(--muted);
+      margin-bottom: 40px;
+      font-weight: 400;
+      text-align: center;
+    }
+    
+    .form-group {
+      margin-bottom: 25px;
+    }
+    
+    .form-label {
+      display: block;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+      font-size: 1rem;
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 15px 20px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: 'Poppins', sans-serif;
+      background: var(--surface);
+      color: var(--text);
+      transition: all 0.3s ease;
+    }
+    
+    .form-input:focus {
+      outline: none;
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(5,150,105,0.1);
+      transform: translateY(-2px);
+    }
+    
+    .form-input::placeholder {
+      color: var(--muted);
+    }
+    
+    .signup-btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, var(--brand), var(--brand-600));
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 25px rgba(5,150,105,0.3);
+      margin-top: 10px;
+    }
+    
+    .signup-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(5,150,105,0.4);
+    }
+    
+    .signup-btn:active {
+      transform: translateY(-1px);
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 10px;
+    }
+    
+    .update-btn {
+      flex: 1;
+      padding: 18px;
+      background: linear-gradient(135deg, var(--brand), var(--brand-600));
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 25px rgba(5,150,105,0.3);
+    }
+    
+    .update-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(5,150,105,0.4);
+    }
+    
+    .delete-btn {
+      flex: 1;
+      padding: 18px;
+      background: linear-gradient(135deg, var(--accent), #dc2626);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 25px rgba(239,68,68,0.3);
+    }
+    
+    .delete-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(239,68,68,0.4);
+    }
+    
+    .update-btn:active,
+    .delete-btn:active {
+      transform: translateY(-1px);
+    }
+    
+    .form-footer {
+      text-align: center;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    
+    .form-footer a {
+      color: var(--brand);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .form-footer a:hover {
+      color: var(--brand-600);
+      text-decoration: underline;
+    }
+    
+    /* Footer */
+    footer {
+      background: linear-gradient(135deg, var(--surface) 0%, var(--brand-light) 100%);
+      text-align: center;
+      padding: 30px;
+      border-top: 1px solid var(--border);
+    }
+    
+    footer p {
+      font-weight: 500;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+    
+  
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 20px;
+      }
+      
+      .signup-container {
+        padding: 40px 30px;
+        margin: 20px;
+      }
+      
+      .signup-title {
+        font-size: 2rem;
+      }
+    }
+    
+
+    .danger-zone {
+      margin-top: 40px;
+      padding: 25px;
+      border: 2px solid rgba(239,68,68,0.2);
+      border-radius: 12px;
+      background: rgba(239,68,68,0.05);
+    }
+    
+    .danger-zone-header {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .danger-zone-header h3 {
+      color: var(--accent);
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    
+    .danger-zone-header p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 400;
+    }
+    
+    .danger-zone .delete-btn {
+      width: 100%;
+      flex: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>Update Profile</h1>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div>{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+  <header>
+    <div class="header-content">
+      <div class="logo-section">
+        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-RCmcphX4mo26kjSE8kGXPrxOFmO8sM.png" alt="Metro Rail Logo">
+        <div class="logo-text">MetroRail</div>
+      </div>
+      <a href="auth-options.html" class="back-btn">← Back</a>
+    </div>
+  </header>
+
+
+  <main>
+    <div class="signup-container">
+      <div class="signup-content">
+        <h1 class="signup-title">Manage Profile 👤</h1>
+        <p class="signup-subtitle">Update your information or delete your account</p>
+        
+       <form method="post" action="{{ url_for('main_routes.update_profile') }}">
+  <div class="form-group">
+    <label for="name" class="form-label">👤 Name</label>
+    <input type="text" id="name" name="name" class="form-input" value="{{ user.name }}" placeholder="Enter your full name">
+  </div>
+  
+  <div class="form-group">
+    <label for="nid" class="form-label">🆔 National ID</label>
+    <input type="text" id="nid" name="nid" class="form-input" value="{{ user.nid }}" placeholder="Enter your national ID">
+  </div>
+  
+  <div class="form-group">
+    <label for="email" class="form-label">📧 Email</label>
+    <input type="email" id="email" name="email" class="form-input" value="{{ user.email }}" placeholder="Enter your email address">
+  </div>
+  
+  <div class="form-group">
+    <label for="password" class="form-label">🔒 New Password</label>
+    <input type="password" id="password" name="password" class="form-input" placeholder="Leave blank to keep current">
+  </div>
+
+  <div class="form-group">
+    <label for="confirm_password" class="form-label">🔒 Confirm New Password</label>
+    <input type="password" id="confirm_password" name="confirm_password" class="form-input" placeholder="Repeat new password">
+  </div>
+  
+  <div class="action-buttons">
+    <button type="submit" class="update-btn">✏️ Update Information</button>
+  </div>
+</form>
+
+
+<div class="danger-zone">
+  <div class="danger-zone-header">
+    <h3>Danger Zone</h3>
+    <p>Once you delete your profile, there is no going back. Please be certain.</p>
+  </div>
+  
+
+  <form method="post" action="{{ url_for('main_routes.delete_profile') }}" onsubmit="return confirm('Delete your profile? This cannot be undone.');">
+    <button type="submit" class="delete-btn">🗑️ Delete Profile</button>
+  </form>
+</div>
+
+        <div class="form-footer">
+          <p>Need help? <a href="support.html">Contact Support</a></p>
+        </div>
+    
+      </div>
+    </div>
+  </main>
+
+
+  <footer>
+    <p>🚊 © 2025 Metro Rail Authority - Connecting Communities, Powering Progress</p>
+  </footer>
+
+  <script>
+    function confirmDelete() {
+      if (confirm('Are you sure you want to delete your profile? This action cannot be undone.')) {
+
+        alert('Profile deletion functionality would be implemented here.');
+      }
+    }
+  </script>
+</body>
+</html>

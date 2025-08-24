@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+
+<html lang="en" data-theme="{{ session.get('theme') }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Metro Rail Management System</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --brand: #2563eb;
+      --brand-600: #1d4ed8;
+      --surface: #f1f5f9;
+      --border: #e2e8f0;
+      --warn: #b45309;
+      --good: #059669;
+      --metro-green: #16a34a;
+      --metro-red: #dc2626;
+    }
+    html[data-theme="dark"] {
+      --bg: #0b1220;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --brand: #3b82f6;
+      --brand-600: #2563eb;
+      --surface: #0f172a;
+      --border: #1f2937;
+      --warn: #f59e0b;
+      --good: #34d399;
+      --metro-green: #22c55e;
+      --metro-red: #ef4444;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      transition: all 0.3s ease;
+    }
+    
+ 
+    .welcome {
+      background: linear-gradient(135deg, var(--surface), var(--bg));
+      border-bottom: 1px solid var(--border);
+      padding: 15px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .welcome-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .welcome-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--metro-green);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .welcome-meta {
+      display: flex;
+      gap: 20px;
+      color: var(--muted);
+      font-size: 14px;
+      flex-wrap: wrap;
+    }
+    .welcome-meta span {
+      background: var(--surface);
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+    }
+    .logout a {
+      background: var(--metro-red);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      font-size: 14px;
+    }
+    .logout a:hover {
+      background: #b91c1c;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+    }
+    
+
+    @media (max-width: 768px) {
+      .welcome-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .welcome-meta {
+        gap: 10px;
+      }
+      .welcome-meta span {
+        font-size: 13px;
+        padding: 4px 10px;
+      }
+    }
+    
+    header {
+      background: linear-gradient(135deg, var(--metro-green), var(--brand));
+      padding: 15px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .logo {
+      height: 40px;
+      width: auto;
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+    }
+    nav a {
+      margin-right: 20px;
+      text-decoration: none;
+      color: white;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+    nav a:hover {
+      background: rgba(255,255,255,0.2);
+      transform: translateY(-2px);
+    }
+    .profile-icon {
+      background: rgba(255,255,255,0.2);
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: white;
+      font-size: 18px;
+    }
+    .profile-icon:hover {
+      background: rgba(255,255,255,0.3);
+      transform: scale(1.1);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    .profile-slider {
+      position: fixed;
+      top: 0;
+      right: -350px;
+      width: 320px;
+      height: 100vh;
+      background: linear-gradient(180deg, var(--surface), var(--bg));
+      box-shadow: -5px 0 20px rgba(0,0,0,0.15);
+      transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1000;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .profile-slider.active {
+      right: 0;
+    }
+    .profile-slider h2 {
+      color: var(--metro-green);
+      margin-bottom: 25px;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .profile-slider button {
+      width: 100%;
+      padding: 15px 20px;
+      margin-bottom: 12px;
+      border: none;
+      border-radius: 12px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 2px solid transparent;
+    }
+    .profile-slider button:hover {
+      background: var(--brand);
+      color: white;
+      transform: translateX(5px);
+      border-color: var(--brand-600);
+    }
+    .profile-slider button.logout {
+      background: var(--metro-red);
+      color: white;
+      margin-top: 20px;
+    }
+    .profile-slider button.logout:hover {
+      background: #b91c1c;
+      transform: translateX(5px) scale(1.02);
+    }
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 999;
+    }
+    .overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+ 
+    .hero {
+      padding: 60px 20px;
+      text-align: center;
+      background: url('{{ url_for("static", filename="image/backg.png") }}') center/cover no-repeat;
+      color: white;
+      position: relative;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+    }
+    .hero h1, 
+    .hero p, 
+    .hero .btn {
+      position: relative;
+      z-index: 1;
+    }
+    .hero h1 {
+      margin-bottom: 15px;
+      font-size: 2.5rem;
+    }
+    .hero .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      margin: 8px;
+      border-radius: 25px;
+      text-decoration: none;
+      background: linear-gradient(135deg, var(--metro-green), var(--brand));
+      color: #fff;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .hero .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+    .announcements {
+      padding: 30px 20px;
+    }
+    .announcements h2 {
+      color: var(--metro-green);
+      margin-bottom: 20px;
+    }
+    .announcements .announcement {
+      border: 1px solid var(--border);
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 12px;
+      background: var(--surface);
+      transition: all 0.3s ease;
+    }
+    .announcements .announcement:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .quick-actions {
+      display: grid;
+      gap: 15px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      padding: 30px 20px;
+    }
+    .quick-actions .action {
+      background: var(--surface);
+      padding: 20px;
+      text-align: center;
+      border-radius: 15px;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+    .quick-actions .action:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      border-color: var(--metro-green);
+    }
+    .quick-actions .action a {
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 600;
+      font-size: 16px;
+    }
+    footer {
+      background: linear-gradient(135deg, var(--metro-green), var(--brand));
+      text-align: center;
+      padding: 20px;
+      margin-top: 30px;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="welcome">
+    <div class="welcome-inner">
+      <div class="welcome-title">
+        <span>Welcome, {{ user.name }} 👋</span>
+      </div>
+      <div class="welcome-meta">
+        <span>Email: {{ user.email }}</span>
+        <span>NID: {{ user.nid }}</span>
+      </div>
+      <!-- <div class="logout">
+        <a href="{{ url_for('main_routes.logout') }}">Logout</a>
+      </div> -->
+    </div>
+  </div>
+  <header>
+    <div class="header-left">
+      <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-RCmcphX4mo26kjSE8kGXPrxOFmO8sM.png" alt="Metro Rail Logo" class="logo">
+      <nav>
+        <a href="#">Book Tickets</a>
+        <a href="#">Schedules</a>
+        <a href="#">Dashboard</a>
+      </nav>
+    </div>
+    <button class="profile-icon" onclick="toggleSlider()">👤</button>
+  </header>
+
+  <div class="overlay" id="overlay" onclick="toggleSlider()"></div>
+  <div id="profileSlider" class="profile-slider">
+    <h2>🚇 My Metro Profile</h2>
+    <button onclick="window.location.href='{{ url_for('main_routes.update_profile') }}'">
+      ⚙️ Update Profile
+    </button>
+    <button onclick="window.location.href='#'">
+      🎫 My Tickets
+    </button>
+    <button onclick="window.location.href='#'">
+      📊 Travel History
+    </button>
+    <button onclick="window.location.href='#'">
+      💳 Payment Methods
+    </button>
+    <button onclick="window.location.href='#'">
+      🔔 Notifications
+    </button>
+    <button onclick="window.location.href='#'">
+      ⚙️ Settings
+    </button>
+    <button onclick="window.location.href='{{ url_for('main_routes.logout') }}'">
+      🚪 Logout
+    </button>
+  </div>
+
+  <section class="hero">
+    <h1>Seamless city journeys, every day</h1>
+    <p>Book tickets, track schedules, earn rewards, and stay updated — all in one place.</p>
+    <a class="btn" href="#">Book Now</a>
+  </section>
+
+  <section class="announcements">
+    <h2>Announcements</h2>
+    {% for a in announcements %}
+    <div class="announcement">
+      <strong>{{ a.type }}:</strong> {{ a.title }} - {{ a.message }}
+      <br><small>{{ a.date }}</small>
+    </div>
+    {% endfor %}
+  </section>
+  <section class="quick-actions">
+    <div class="action"><a href="#">🎫 Book Tickets</a></div>
+    <div class="action"><a href="#">💰 Fare Calculator</a></div>
+    <div class="action"><a href="#">🕒 Train Schedules</a></div>
+    <div class="action"><a href="#">📊 Dashboard</a></div>
+  </section>
+
+  <footer>
+    <p>© 2025 Metro Rail Authority</p>
+  </footer>
+
+  <script>
+    function toggleSlider() {
+      document.getElementById('profileSlider').classList.toggle('active');
+      document.getElementById('overlay').classList.toggle('active');
+    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        document.getElementById('profileSlider').classList.remove('active');
+        document.getElementById('overlay').classList.remove('active');
+      }
+    });
+  </script>
+</body>
+</html>

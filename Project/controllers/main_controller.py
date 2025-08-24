@@ -396,7 +396,6 @@ def download_receipt(booking_id):
     
     status = 'upcoming' if departure_date > date.today() else 'completed'
     
-    # Calculate fare
     base_fare = {'Standard': 20, 'Premium': 30, 'First': 40}.get(booking[7], 20)
     fare = int(base_fare * 1.5 * int(booking[6]))
     
@@ -413,8 +412,7 @@ def download_receipt(booking_id):
         'status': status,
         'fare': fare
     }
-    
-    # Generate PDF
+  
     pdf_buffer = create_ticket_receipt_pdf(booking_data, user_data)
     
     return send_file(

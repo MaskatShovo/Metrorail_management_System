@@ -289,10 +289,10 @@ def create_ticket_receipt_pdf(booking_data, user_data):
         ['Booking Date:', booking_data['booking_date'].strftime('%B %d, %Y at %I:%M %p')],
     ]
     
-    # Create table
+
     table = Table(ticket_data, colWidths=[2.5*inch, 3*inch])
     table.setStyle(TableStyle([
-        # Header rows styling
+ 
         ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#059669')),
         ('BACKGROUND', (0, 6), (-1, 6), colors.HexColor('#059669')),
         ('BACKGROUND', (0, 15), (-1, 15), colors.HexColor('#059669')),
@@ -305,8 +305,7 @@ def create_ticket_receipt_pdf(booking_data, user_data):
         ('FONTSIZE', (0, 0), (-1, 0), 12),
         ('FONTSIZE', (0, 6), (-1, 6), 12),
         ('FONTSIZE', (0, 15), (-1, 15), 12),
-        
-        # Data styling
+
         ('FONTNAME', (0, 1), (0, -1), 'Helvetica-Bold'),
         ('FONTSIZE', (0, 1), (-1, -1), 10),
         ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
@@ -318,11 +317,10 @@ def create_ticket_receipt_pdf(booking_data, user_data):
     story.append(table)
     story.append(Spacer(1, 30))
     
-    # Generate QR Code
+
     qr_data = f"MR{booking_data['id']}|{user_data['name']}|{booking_data['source']}|{booking_data['destination']}|{booking_data['fare']}"
     qr_buffer = generate_qr_code(qr_data)
-    
-    # Create QR code section
+ 
     qr_style = ParagraphStyle(
         'QRStyle',
         parent=styles['Normal'],

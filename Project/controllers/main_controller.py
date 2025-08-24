@@ -224,7 +224,7 @@ def generate_qr_code(data):
     
     img = qr.make_image(fill_color="black", back_color="white")
     
-    # Convert to buffer
+
     buffer = io.BytesIO()
     img.save(buffer, format='PNG')
     buffer.seek(0)
@@ -240,7 +240,7 @@ def create_ticket_receipt_pdf(booking_data, user_data):
     styles = getSampleStyleSheet()
     story = []
     
-    # Custom styles
+
     title_style = ParagraphStyle(
         'CustomTitle',
         parent=styles['Heading1'],
@@ -261,12 +261,10 @@ def create_ticket_receipt_pdf(booking_data, user_data):
         fontName='Helvetica-Bold'
     )
     
-    # Header
     story.append(Paragraph("🚊 DHAKA METRO RAIL", title_style))
     story.append(Paragraph("OFFICIAL TICKET RECEIPT", header_style))
     story.append(Spacer(1, 20))
-    
-    # Ticket Information Table
+
     ticket_data = [
         ['TICKET DETAILS', ''],
         ['Ticket ID:', f"MR{booking_data['id']}"],

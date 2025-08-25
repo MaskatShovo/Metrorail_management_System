@@ -21,6 +21,18 @@ def create_user(name, nid, email, password):
 
     mysql.connection.commit()
     cursor.close()
+def create_booking(user_id, ticket_type, source, destination, departure_date, return_date, passengers, travel_class):
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        INSERT INTO bookings 
+        (user_id, ticket_type, source, destination, departure_date, return_date, passengers, class) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """,
+        (user_id, ticket_type, source, destination, departure_date, return_date, passengers, travel_class)
+    )
+    mysql.connection.commit()
+    cursor.close()
 
 def get_user_by_email_password(email, password):
     cursor = mysql.connection.cursor()

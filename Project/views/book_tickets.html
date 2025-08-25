@@ -332,7 +332,7 @@
   <header>
     <div class="header-content">
       <div class="logo-section">
-        <!-- Added metro rail logo image -->
+      
         <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-RCmcphX4mo26kjSE8kGXPrxOFmO8sM.png" alt="Metro Rail Logo" class="logo">
         <div class="logo-text">🚊 MetroRail</div>
       </div>
@@ -345,7 +345,7 @@
   </header>
 
   <div class="container">
-    <!-- Flash Messages -->
+    
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         <div class="flash-messages">
@@ -473,7 +473,7 @@
   </div>
 
   <script>
-    // Set minimum date to today
+   
     document.getElementById('departureDate').min = new Date().toISOString().split('T')[0];
     document.getElementById('returnDate').min = new Date().toISOString().split('T')[0];
 
@@ -512,7 +512,7 @@
         return;
       }
 
-      // Simple fare calculation logic
+      
       const baseFares = {
         'standard': 20,
         'premium': 35,
@@ -523,7 +523,7 @@
       let fare = baseFares[travelClass] * distanceMultiplier * passengers;
       
       if (ticketType === 'return') {
-        fare *= 1.8; // 10% discount on return tickets
+        fare *= 1.8; 
       }
 
       document.getElementById('fareAmount').textContent = `৳${fare}`;
@@ -552,7 +552,7 @@
       return stations[station] || 0;
     }
 
-    // Auto-calculate fare when form changes
+  
     document.querySelectorAll('select, input[type="radio"]').forEach(element => {
       element.addEventListener('change', function() {
         if (document.getElementById('source').value && document.getElementById('destination').value) {
@@ -561,7 +561,7 @@
       });
     });
 
-    // Form validation before submission
+
     document.getElementById('bookingForm').addEventListener('submit', function(e) {
       const source = document.getElementById('source').value;
       const destination = document.getElementById('destination').value;
@@ -572,9 +572,10 @@
         return false;
       }
       
-      // Form is valid, let it submit normally to the server
+
       return true;
     });
   </script>
 </body>
+
 </html>

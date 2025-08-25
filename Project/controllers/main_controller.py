@@ -455,6 +455,72 @@ def download_receipt(booking_id):
         mimetype='application/pdf'
     )
 
+@main_routes.route("/cancel_refund")
+def cancel_refund():
+    if "user" not in session:
+        flash("Please log in first", "error")
+        return redirect(url_for("main_routes.login"))
+    
+    user_id = session["user"]["id"]
+    bookings = get_user_bookings(user_id)
+    
+    processed_bookings = []
+    for booking in bookings:
+        from datetime import datetime, date
+        
+        if isinstance(booking[5], str):
+            departure_date = datetime.strptime(booking[5], '%Y-%m-%d').date()
+        else:
+            departure_date = booking[5]
+        
+        # Check if booking has status column, if not assign based on date
+        status = getattr(booking, 'status', None) or ('upcoming' if departure_date > date.today() else 'completed')
+        
+        base_fare = {'Standard': 20, 'Premium': 30, 'First': 40}.get(booking[8], 20)
+        fare = int(base_fare * 1.5 * int(booking[7]))
+        
+        processed_bookings.append({
+            'id': booking[0],
+            'ticket_type': booking[2],
+            'source': booking[3],
+            'destination': booking[4],
+            'departure_date': booking[5],
+            'return_date': booking[6],
+            'passengers': booking[7],
+            'travel_class': booking[8],
+            'booking_date': booking[9],
+            'status': status,
+            'fare': fare
+        })
+    
+    return render_template("cancel_refund.html", bookings=processed_bookings)
+
+@main_routes.route("/cancel_ticket/<int:booking_id>", methods=["POST"])
+def cancel_ticket(booking_id):
+    if "user" not in session:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    user_id = session["user"]["id"]
+    
+    try:
+        update_booking_status(booking_id, user_id, 'cancelled')
+        return jsonify({"success": True, "message": "Ticket cancelled successfully"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@main_routes.route("/process_refund/<int:booking_id>", methods=["POST"])
+def process_refund(booking_id):
+    if "user" not in session:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    user_id = session["user"]["id"]
+    
+    try:
+        update_booking_status(booking_id, user_id, 'refunded')
+        return jsonify({"success": True, "message": "Refund processed successfully"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 
 

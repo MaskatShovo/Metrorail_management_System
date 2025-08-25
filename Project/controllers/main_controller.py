@@ -169,7 +169,46 @@ def fare_calculator():
 @main_routes.route("/train_schedule")
 def train_schedule():
     return render_template("train_schedule.html")
+@main_routes.route("/book_tickets", methods=["GET", "POST"])
+def book_tickets():
+    if "user" not in session:
+        flash("Please log in first", "error")
+        return redirect(url_for("main_routes.login"))
 
+    if request.method == "POST":
+        try:
+            user_id = session["user"]["id"]
+            ticket_type = request.form.get("ticketType")
+            source = request.form.get("source")
+            destination = request.form.get("destination")
+            departure_date = request.form.get("departureDate")
+            return_date = request.form.get("returnDate") or None
+            passengers = request.form.get("passengers")
+            travel_class = request.form.get("class")
+
+
+            if not all([ticket_type, source, destination, departure_date, passengers, travel_class]):
+                flash("Please fill in all required fields.", "error")
+                return redirect(url_for("main_routes.book_tickets"))
+
+            if source == destination:
+                flash("Source and destination cannot be the same!", "error")
+                return redirect(url_for("main_routes.book_tickets"))
+
+
+            if ticket_type == "return" and not return_date:
+                flash("Return date is required for return tickets.", "error")
+                return redirect(url_for("main_routes.book_tickets"))
+
+            create_booking(user_id, ticket_type, source, destination, departure_date, return_date, passengers, travel_class)
+
+            flash("🎉 Ticket booked successfully!", "success")
+            return redirect(url_for("main_routes.userpage"))
+        except Exception as e:
+            flash(f"Failed to book ticket: {str(e)}", "error")
+            return redirect(url_for("main_routes.book_tickets"))
+
+    return render_template("book_tickets.html")
 @main_routes.route("/ticket_history")
 def ticket_history():
     if "user" not in session:

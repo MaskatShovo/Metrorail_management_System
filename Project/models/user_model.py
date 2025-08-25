@@ -122,6 +122,26 @@ def get_booking_by_id(booking_id, user_id):
     cursor.close()
     return booking
 
+def update_booking_status(booking_id, user_id, status):
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        "UPDATE bookings SET status = %s WHERE id = %s AND user_id = %s",
+        (status, booking_id, user_id)
+    )
+    mysql.connection.commit()
+    cursor.close()
+
+def delete_booking(booking_id, user_id):
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        "DELETE FROM bookings WHERE id = %s AND user_id = %s",
+        (booking_id, user_id)
+    )
+    mysql.connection.commit()
+    cursor.close()
+
+
+
 
 
 

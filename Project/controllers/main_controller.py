@@ -168,7 +168,21 @@ def fare_calculator():
 
 @main_routes.route("/train_schedule")
 def train_schedule():
-    return render_template("train_schedule.html")
+    try:
+        schedules = get_all_schedules()
+        current_time = datetime.now().strftime('%H:%M')
+        return render_template("train_schedule.html", 
+                             schedules=schedules, 
+                             getStationName=get_station_name,
+                             current_time=current_time)
+    except Exception as e:
+        print(f"Error fetching schedules: {e}")
+        current_time = datetime.now().strftime('%H:%M')
+        return render_template("train_schedule.html", 
+                             schedules=[], 
+                             getStationName=get_station_name,
+                             current_time=current_time)
+
 @main_routes.route("/book_tickets", methods=["GET", "POST"])
 def book_tickets():
     if "user" not in session:

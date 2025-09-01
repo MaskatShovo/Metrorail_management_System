@@ -344,7 +344,32 @@ def create_admin(admin_id, password):
     cursor.close()
 
 
+def create_feedback(user_id, rating, category, subject, message):
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        INSERT INTO feedbacks (user_id, rating, category, subject, message) 
+        VALUES (%s, %s, %s, %s, %s)
+        """,
+        (user_id, rating, category, subject, message)
+    )
+    mysql.connection.commit()
+    cursor.close()
 
+def get_user_feedbacks(user_id):
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        SELECT id, rating, category, subject, message, created_at
+        FROM feedbacks 
+        WHERE user_id = %s 
+        ORDER BY created_at DESC
+        """,
+        (user_id,)
+    )
+    feedbacks = cursor.fetchall()
+    cursor.close()
+    return feedbacks
 
 
 

@@ -557,17 +557,17 @@
             }, 500);
         }
 
-        // Initialize page
+        
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize time display and update every second
+            
             updateCurrentTime();
             setInterval(updateCurrentTime, 1000);
             
-            // Initialize schedules display
+            
             renderSchedules(scheduleData);
             updateResultsCount(scheduleData.length);
             
-            // Add search functionality
+            
             const searchInput = document.getElementById('searchInput');
             if (searchInput) {
                 searchInput.addEventListener('input', (e) => {
@@ -578,4 +578,5 @@
     </script>
 </body>
 </html>
+
 

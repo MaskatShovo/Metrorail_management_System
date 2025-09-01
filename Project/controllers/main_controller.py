@@ -536,7 +536,9 @@ def process_refund(booking_id):
         return jsonify({"error": str(e)}), 500
 
 
-
+@main_routes.route("/time_calculator")
+def time_calculator():
+    return render_template("time_calculator.html")
 
 
 

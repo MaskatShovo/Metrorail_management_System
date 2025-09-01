@@ -715,8 +715,62 @@ def admin_logout():
     flash("Admin logged out successfully.", "info")
     return redirect(url_for("main_routes.admin_login"))
 
+@main_routes.route("/admin_schedules")
+def admin_schedules():
+    schedules = get_all_schedules()
+    return render_template("admin_e.html", schedules=schedules, getStationName=get_station_name)
+
+@main_routes.route("/add_schedule", methods=["POST"])
+def add_schedule():
+    try:
+        train_number = request.form.get("trainNumber")
+        train_name = request.form.get("trainName")
+        start_station = request.form.get("startStation")
+        end_station = request.form.get("endStation")
+        departure_time = request.form.get("departureTime")
+        arrival_time = request.form.get("arrivalTime")
+        frequency = request.form.get("frequency")
+        status = request.form.get("status")
+        route_description = request.form.get("route")
+
+        create_schedule(train_number, train_name, start_station, end_station, 
+                      departure_time, arrival_time, frequency, status, route_description)
+        
+        return jsonify({"success": True, "message": "Schedule added successfully!"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@main_routes.route("/delete_schedule/<int:schedule_id>", methods=["DELETE"])
+def delete_schedule_route(schedule_id):
+    try:
+        delete_schedule(schedule_id)
+        return jsonify({"success": True, "message": "Schedule deleted successfully!"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
+from models.user_model import get_admin_by_credentials
+
+@main_routes.route("/update_schedule", methods=["POST"])
+def update_schedule_route():
+    try:
+        schedule_id = request.form.get("scheduleId")
+        train_number = request.form.get("trainNumber")
+        train_name = request.form.get("trainName")
+        start_station = request.form.get("startStation")
+        end_station = request.form.get("endStation")
+        departure_time = request.form.get("departureTime")
+        arrival_time = request.form.get("arrivalTime")
+        frequency = request.form.get("frequency")
+        status = request.form.get("status")
+        route_description = request.form.get("route")
+
+        update_schedule1(schedule_id, train_number, train_name, start_station, end_station, 
+                       departure_time, arrival_time, frequency, status, route_description)
+        
+        return jsonify({"success": True, "message": "Schedule updated successfully!"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 

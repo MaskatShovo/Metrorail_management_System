@@ -20,7 +20,7 @@
             overflow-x: hidden;
         }
 
-        /* Animated Background Particles */
+
         .particles {
             position: fixed;
             top: 0;
@@ -431,7 +431,7 @@
     </style>
 </head>
 <body>
-    <!-- Animated Background Particles -->
+
     <div class="particles">
         <div class="particle"></div>
         <div class="particle"></div>
@@ -445,7 +445,7 @@
     </div>
 
     <div class="container">
-        <!-- Header -->
+
         <div class="header">
             <a href="{{ url_for('main_routes.userpage') }}" class="back-btn">
                 <span>←</span> Back to Dashboard
@@ -460,7 +460,7 @@
         </div>
 
         <div class="form-container">
-            <!-- Flash Messages -->
+    
             {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -471,7 +471,7 @@
             {% endif %}
             {% endwith %}
 
-            <!-- Feedback Tips -->
+      
             <div class="feedback-tips">
                 <h3>📝 Feedback Guidelines</h3>
                 <ul class="tips-list">
@@ -482,7 +482,7 @@
                 </ul>
             </div>
 
-            <!-- Feedback Form -->
+       
             <form method="POST" action="{{ url_for('main_routes.feedback') }}">
                 <div class="form-group">
                     <label for="rating">Overall Rating <span class="required">*</span></label>
@@ -549,7 +549,7 @@
     </div>
 
     <script>
-        // Star Rating System
+      
         const stars = document.querySelectorAll('.star');
         const ratingText = document.getElementById('ratingText');
         const ratingValue = document.getElementById('ratingValue');
@@ -597,7 +597,7 @@
             });
         }
 
-        // Form validation
+  
         document.querySelector('form').addEventListener('submit', function(e) {
             const rating = ratingValue.value;
             const category = document.querySelector('input[name="category"]:checked');
@@ -635,7 +635,7 @@
             }
         });
 
-        // Character counter for textarea
+    
         const textarea = document.getElementById('message');
         const charCounter = document.createElement('div');
         charCounter.style.cssText = 'text-align: right; color: #6c757d; font-size: 12px; margin-top: 5px;';
@@ -654,13 +654,13 @@
             }
         });
 
-        // Auto-resize textarea
+   
         textarea.addEventListener('input', function() {
             this.style.height = 'auto';
             this.style.height = (this.scrollHeight) + 'px';
         });
 
-        // Particle mouse interaction
+    
         document.addEventListener('mousemove', function(e) {
             const particles = document.querySelectorAll('.particle');
             const mouseX = e.clientX / window.innerWidth;
@@ -676,4 +676,5 @@
         });
     </script>
 </body>
+
 </html>

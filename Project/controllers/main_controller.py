@@ -794,6 +794,37 @@ def get_station_name(value):
     }
     return station_names.get(value, value)
 
+@main_routes.route("/feedback", methods=["GET", "POST"])
+def feedback():
+    if "user" not in session:
+        flash("Please log in first", "error")
+        return redirect(url_for("main_routes.login"))
+    
+    if request.method == "POST":
+        try:
+            user_id = session["user"]["id"]
+            rating = request.form.get("rating")
+            category = request.form.get("category")
+            subject = request.form.get("subject").strip()
+            message = request.form.get("message").strip()
+            
+            if not all([rating, category, subject, message]):
+                flash("Please fill in all required fields.", "error")
+                return redirect(url_for("main_routes.feedback"))
+            
+            if not (1 <= int(rating) <= 5):
+                flash("Please select a valid rating between 1 and 5.", "error")
+                return redirect(url_for("main_routes.feedback"))
+            
+            create_feedback(user_id, int(rating), category, subject, message)
+            flash("Thank you for your feedback! We appreciate your input.", "success")
+            return redirect(url_for("main_routes.userpage"))
+            
+        except Exception as e:
+            flash(f"Failed to submit feedback: {str(e)}", "error")
+            return redirect(url_for("main_routes.feedback"))
+    
+    return render_template("feedback.html")
 
 
 

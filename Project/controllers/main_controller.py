@@ -678,6 +678,42 @@ def mark_notification_read(notification_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@main_routes.route("/admin_login", methods=["GET", "POST"])
+def admin_login():
+    if request.method == "POST":
+        admin_id = request.form.get("admin_id", "").strip()
+        password = request.form.get("password", "").strip()
+
+        if not admin_id or not password:
+            flash("Admin ID and password are required.", "error")
+            return redirect(url_for("main_routes.admin_login"))
+
+        admin = get_admin_by_credentials(admin_id, password)
+        if admin:
+            session["admin"] = {"id": admin[0]}
+            flash("Admin login successful!", "success")
+            return redirect(url_for("main_routes.admin_dashboard"))
+        else:
+            flash("Invalid admin credentials", "error")
+            return redirect(url_for("main_routes.admin_login"))
+
+    return render_template("admin_login.html")
+
+@main_routes.route("/admin_dashboard")
+def admin_dashboard():
+    if "admin" not in session:
+        flash("Please log in as admin first", "error")
+        return redirect(url_for("main_routes.admin_login"))
+    
+    total_bookings = get_total_bookings_count()
+    
+    return render_template("admin_dashboard.html", total_bookings=total_bookings)
+@main_routes.route("/admin_logout")
+def admin_logout():
+    if "admin" in session:
+        session.pop("admin")
+    flash("Admin logged out successfully.", "info")
+    return redirect(url_for("main_routes.admin_login"))
 
 
 

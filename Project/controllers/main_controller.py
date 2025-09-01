@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash , jsonify,session
-from models.user_model import create_user, get_user_by_email_password, get_user_by_id, update_user, delete_user
+from models.user_model import create_user, get_user_by_email_password, get_user_by_id, update_user, delete_user, create_booking,get_user_bookings,get_booking_by_id, update_booking_status, delete_booking,create_schedule, get_all_schedules, update_schedule1, delete_schedule,get_admin_by_credentials, create_lost_item_report, get_lost_item_by_tracking_id, get_user_recent_activity, get_user_upcoming_trips, get_user_notifications,mark_notification_as_read,get_total_bookings_count,create_feedback, get_user_feedbacks, get_monthly_revenue
     
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import inch

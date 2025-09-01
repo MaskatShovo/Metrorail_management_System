@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Travel Time Calculator - Metro Rail Management System</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+    
+    :root {
+      --bg: #f8fafc;
+      --text: #1e293b;
+      --muted: #64748b;
+      --brand: #059669;
+      --brand-600: #047857;
+      --brand-light: #d1fae5;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --warn: #f59e0b;
+      --good: #10b981;
+      --accent: #ef4444;
+      --gradient-start: #059669;
+      --gradient-end: #34d399;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+      opacity: 0.03;
+      z-index: -1;
+    }
+    
+    header {
+      background: var(--surface);
+      padding: 15px 30px;
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .logo {
+      height: 40px;
+      width: auto;
+    }
+    
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    nav a {
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 600;
+      margin-left: 30px;
+      padding: 8px 16px;
+      border-radius: 25px;
+      transition: all 0.3s ease;
+    }
+    
+    nav a:hover {
+      color: var(--brand);
+      background: var(--brand-light);
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 30px;
+    }
+    
+    .page-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .page-subtitle {
+      text-align: center;
+      color: var(--muted);
+      margin-bottom: 40px;
+      font-size: 1.1rem;
+    }
+    
+    .calculator-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      align-items: start;
+    }
+    
+    .calculator-form {
+      background: var(--surface);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      border: 1px solid var(--border);
+    }
+    
+    .form-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 25px;
+      color: var(--brand);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    
+    input, select {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: var(--surface);
+      color: var(--text);
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(5,150,105,0.1);
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: linear-gradient(135deg, var(--brand), var(--brand-600));
+      color: white;
+      box-shadow: 0 8px 25px rgba(5,150,105,0.3);
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(5,150,105,0.4);
+    }
+    
+    .results-panel {
+      background: var(--surface);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      border: 1px solid var(--border);
+      position: sticky;
+      top: 100px;
+    }
+    
+    .results-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 25px;
+      color: var(--brand);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .time-display {
+      background: linear-gradient(135deg, var(--brand-light), var(--surface));
+      padding: 25px;
+      border-radius: 15px;
+      text-align: center;
+      margin-bottom: 25px;
+      border: 2px solid var(--brand);
+    }
+    
+    .time-amount {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--brand);
+      margin-bottom: 5px;
+    }
+    
+    .time-label {
+      color: var(--muted);
+      font-size: 1rem;
+      margin-bottom: 15px;
+    }
+    
+    .journey-details {
+      background: var(--bg);
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .journey-route {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+    
+    .location-info {
+      text-align: center;
+      flex: 1;
+    }
+    
+    .location-name {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 5px;
+    }
+    
+    .route-arrow {
+      font-size: 1.5rem;
+      color: var(--brand);
+      margin: 0 20px;
+    }
+    
+    .time-breakdown {
+      margin-top: 20px;
+    }
+    
+    .breakdown-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .breakdown-item:last-child {
+      border-bottom: none;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: var(--brand);
+    }
+    
+    .empty-results {
+      text-align: center;
+      color: var(--muted);
+      padding: 40px 20px;
+    }
+    
+    .empty-icon {
+      font-size: 3rem;
+      margin-bottom: 15px;
+    }
+    
+    .tips-section {
+      background: var(--surface);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      border: 1px solid var(--border);
+      margin-top: 30px;
+      grid-column: 1 / -1;
+    }
+    
+    .tips-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 25px;
+      color: var(--brand);
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    
+    .tip-item {
+      background: var(--bg);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+    
+    .tip-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .tip-icon {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+    
+    .tip-title {
+      font-weight: 600;
+      color: var(--brand);
+      margin-bottom: 5px;
+    }
+    
+    .tip-desc {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    
+    .eta-info {
+      background: linear-gradient(135deg, var(--good), #22c55e);
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 15px;
+      text-align: center;
+      font-weight: 600;
+    }
+    
+    @media (max-width: 768px) {
+      .calculator-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .results-panel {
+        position: static;
+      }
+      
+      .journey-route {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .route-arrow {
+        transform: rotate(90deg);
+        margin: 10px 0;
+      }
+      
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      
+      .tips-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .page-title {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo-section">
+        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-RCmcphX4mo26kjSE8kGXPrxOFmO8sM.png" alt="Metro Rail Logo" class="logo">
+        <div class="logo-text">🚊 MetroRail</div>
+      </div>
+      <nav>
+        <a href="index.html">🏠 Home</a>
+        <a href="book-tickets.html">🎫 Book</a>
+        <a href="ticket-history.html">📊 History</a>
+        <a href="schedules.html">📅 Schedules</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1 class="page-title">⏱️ Travel Time Calculator</h1>
+    <p class="page-subtitle">Plan your journey with accurate travel time estimates including traffic and waiting periods</p>
+
+    <div class="calculator-container">
+      <div class="calculator-form">
+        <h3 class="form-title">🎯 Journey Planning</h3>
+        
+        <form id="travelForm">
+          <div class="form-group">
+            <label for="fromStation">From Station</label>
+            <select id="fromStation" required>
+              <option value="">Select Source Station</option>
+              <option value="uttara-north">Uttara North</option>
+              <option value="uttara-center">Uttara Center</option>
+              <option value="uttara-south">Uttara South</option>
+              <option value="pallabi">Pallabi</option>
+              <option value="mirpur-11">Mirpur 11</option>
+              <option value="mirpur-10">Mirpur 10</option>
+              <option value="kazipara">Kazipara</option>
+              <option value="shewrapara">Shewrapara</option>
+              <option value="agargaon">Agargaon</option>
+              <option value="bijoy-sarani">Bijoy Sarani</option>
+              <option value="farmgate">Farmgate</option>
+              <option value="karwan-bazar">Karwan Bazar</option>
+              <option value="shahbagh">Shahbagh</option>
+              <option value="dhaka-university">Dhaka University</option>
+              <option value="bangladesh-secretariat">Bangladesh Secretariat</option>
+              <option value="motijheel">Motijheel</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="toStation">To Station</label>
+            <select id="toStation" required>
+              <option value="">Select Destination Station</option>
+              <option value="uttara-north">Uttara North</option>
+              <option value="uttara-center">Uttara Center</option>
+              <option value="uttara-south">Uttara South</option>
+              <option value="pallabi">Pallabi</option>
+              <option value="mirpur-11">Mirpur 11</option>
+              <option value="mirpur-10">Mirpur 10</option>
+              <option value="kazipara">Kazipara</option>
+              <option value="shewrapara">Shewrapara</option>
+              <option value="agargaon">Agargaon</option>
+              <option value="bijoy-sarani">Bijoy Sarani</option>
+              <option value="farmgate">Farmgate</option>
+              <option value="karwan-bazar">Karwan Bazar</option>
+              <option value="shahbagh">Shahbagh</option>
+              <option value="dhaka-university">Dhaka University</option>
+              <option value="bangladesh-secretariat">Bangladesh Secretariat</option>
+              <option value="motijheel">Motijheel</option>
+            </select>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="time">Departure Time</label>
+              <input type="time" id="time" name="time" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="date">Travel Date</label>
+              <input type="date" id="date" name="date" required>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="buffer">Buffer Time</label>
+            <select id="buffer" name="buffer">
+              <option value="0">No Buffer</option>
+              <option value="5">5 minutes</option>
+              <option value="10" selected>10 minutes</option>
+              <option value="15">15 minutes</option>
+              <option value="20">20 minutes</option>
+            </select>
+          </div>
+          
+          <button type="submit" class="btn">🚊 Calculate Metro Journey Time</button>
+        </form>
+      </div>
+
+      <div class="results-panel">
+        <h3 class="results-title">📊 Journey Results</h3>
+        
+        <div id="timeResults" class="empty-results">
+          <div class="empty-icon">⏱️</div>
+          <p>Fill in journey details to calculate travel time</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tips-section">
+      <h3 class="tips-title">💡 Smart Travel Tips</h3>
+      
+      <div class="tips-grid">
+        <div class="tip-item">
+          <div class="tip-icon">🚦</div>
+          <div class="tip-title">Peak Hours</div>
+          <div class="tip-desc">Avoid 7-9 AM and 5-7 PM for shorter travel times in Dhaka</div>
+        </div>
+        
+        <div class="tip-item">
+          <div class="tip-icon">📱</div>
+          <div class="tip-title">Real-time Updates</div>
+          <div class="tip-desc">Check live traffic before departure for best routes</div>
+        </div>
+        
+        <div class="tip-item">
+          <div class="tip-icon">⏰</div>
+          <div class="tip-title">Buffer Time</div>
+          <div class="tip-desc">Add 15-30 minutes buffer for important appointments</div>
+        </div>
+        
+        <div class="tip-item">
+          <div class="tip-icon">🚊</div>
+          <div class="tip-title">Metro Schedule</div>
+          <div class="tip-desc">Trains run every 5-8 minutes during peak hours</div>
+        </div>
+        
+        <div class="tip-item">
+          <div class="tip-icon">🎫</div>
+          <div class="tip-title">Smart Card</div>
+          <div class="tip-desc">Use MRT pass for faster boarding and reduced waiting time</div>
+        </div>
+        
+        <div class="tip-item">
+          <div class="tip-icon">🛣️</div>
+          <div class="tip-title">Alternative Routes</div>
+          <div class="tip-desc">Know backup routes in case of road closures or congestion</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Set default date to today and current time
+    document.getElementById('date').valueAsDate = new Date();
+    const now = new Date();
+    const currentTime = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+    document.getElementById('time').value = currentTime;
+    
+    // Metro rail stations in order
+    const stations = {
+      'uttara-north': 'Uttara North',
+      'uttara-center': 'Uttara Center',
+      'uttara-south': 'Uttara South',
+      'pallabi': 'Pallabi',
+      'mirpur-11': 'Mirpur 11',
+      'mirpur-10': 'Mirpur 10',
+      'kazipara': 'Kazipara',
+      'shewrapara': 'Shewrapara',
+      'agargaon': 'Agargaon',
+      'bijoy-sarani': 'Bijoy Sarani',
+      'farmgate': 'Farmgate',
+      'karwan-bazar': 'Karwan Bazar',
+      'shahbagh': 'Shahbagh',
+      'dhaka-university': 'Dhaka University',
+      'bangladesh-secretariat': 'Bangladesh Secretariat',
+      'motijheel': 'Motijheel'
+    };
+
+    function getStationIndex(station) {
+      const stationOrder = [
+        'uttara-north', 'uttara-center', 'uttara-south', 'pallabi', 'mirpur-11', 'mirpur-10',
+        'kazipara', 'shewrapara', 'agargaon', 'bijoy-sarani', 'farmgate', 'karwan-bazar',
+        'shahbagh', 'dhaka-university', 'bangladesh-secretariat', 'motijheel'
+      ];
+      return stationOrder.indexOf(station);
+    }
+    
+    function formatTime(minutes) {
+      const hours = Math.floor(minutes / 60);
+      const mins = minutes % 60;
+      return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+    }
+    
+    function getETA(totalMinutes) {
+      const now = new Date();
+      now.setMinutes(now.getMinutes() + totalMinutes);
+      return now.toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: true 
+      });
+    }
+    
+    function calculateTravel() {
+      const fromStation = document.getElementById('fromStation').value;
+      const toStation = document.getElementById('toStation').value;
+      const time = document.getElementById('time').value;
+      const buffer = parseInt(document.getElementById('buffer').value);
+      
+      const resultsDiv = document.getElementById('timeResults');
+      
+      if (!fromStation || !toStation || !time) {
+        resultsDiv.innerHTML = `
+          <div class="empty-results">
+            <div class="empty-icon">⏱️</div>
+            <p>Please select both stations and departure time</p>
+          </div>
+        `;
+        return;
+      }
+      
+      if (fromStation === toStation) {
+        resultsDiv.innerHTML = `
+          <div class="empty-results">
+            <div class="empty-icon">⚠️</div>
+            <p>Source and destination stations cannot be the same</p>
+          </div>
+        `;
+        return;
+      }
+      
+      // Calculate metro journey time
+      const stationDistance = Math.abs(getStationIndex(fromStation) - getStationIndex(toStation));
+      const travelTimeMinutes = stationDistance * 3; // 3 minutes per station
+      
+      // Waiting time for metro (platform + boarding)
+      const hour = parseInt(time.split(':')[0]);
+      let waitingTime = 5; // Base waiting time
+      
+      // Peak hours: longer waiting times
+      if ((hour >= 7 && hour <= 10) || (hour >= 17 && hour <= 20)) {
+        waitingTime = 8; // Peak hour waiting
+      }
+      
+      const totalMinutes = travelTimeMinutes + waitingTime + buffer;
+      const eta = getETA(totalMinutes);
+      
+      resultsDiv.innerHTML = `
+        <div class="time-display">
+          <div class="time-amount">${formatTime(totalMinutes)}</div>
+          <div class="time-label">Total Journey Time</div>
+        </div>
+        
+        <div class="journey-details">
+          <div class="journey-route">
+            <div class="location-info">
+              <div class="location-name">${stations[fromStation]}</div>
+            </div>
+            <div class="route-arrow">→</div>
+            <div class="location-info">
+              <div class="location-name">${stations[toStation]}</div>
+            </div>
+          </div>
+          <div style="text-align: center; color: var(--muted); font-size: 0.9rem;">
+            🚊 Dhaka Metro Rail MRT Line 6 • ${stationDistance} station${stationDistance > 1 ? 's' : ''}
+          </div>
+        </div>
+        
+        <div class="time-breakdown">
+          <div class="breakdown-item">
+            <span>Travel Time (${stationDistance} stations)</span>
+            <span>${formatTime(travelTimeMinutes)}</span>
+          </div>
+          <div class="breakdown-item">
+            <span>Platform Waiting</span>
+            <span>${formatTime(waitingTime)}</span>
+          </div>
+          <div class="breakdown-item">
+            <span>Buffer Time</span>
+            <span>${formatTime(buffer)}</span>
+          </div>
+          <div class="breakdown-item">
+            <span>Total Journey Time</span>
+            <span>${formatTime(totalMinutes)}</span>
+          </div>
+        </div>
+        
+        <div class="eta-info">
+          🎯 Estimated Arrival: ${eta}
+        </div>
+      `;
+    }
+    
+    document.getElementById('travelForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      calculateTravel();
+    });
+    
+    // Real-time calculation on input change
+    document.querySelectorAll('input, select').forEach(element => {
+      element.addEventListener('change', function() {
+        if (document.getElementById('fromStation').value && 
+            document.getElementById('toStation').value && 
+            document.getElementById('time').value) {
+          calculateTravel();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

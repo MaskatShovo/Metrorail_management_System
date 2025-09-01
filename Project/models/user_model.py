@@ -372,7 +372,52 @@ def get_user_feedbacks(user_id):
     return feedbacks
 
 
+def create_schedule(train_number, train_name, start_station, end_station, departure_time, arrival_time, frequency, status, route_description):
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        INSERT INTO schedules 
+        (train_number, train_name, start_station, end_station, departure_time, arrival_time, frequency, status, route_description) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """,
+        (train_number, train_name, start_station, end_station, departure_time, arrival_time, frequency, status, route_description)
+    )
+    mysql.connection.commit()
+    cursor.close()
 
+def get_all_schedules():
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        SELECT id, train_number, train_name, start_station, end_station, 
+               departure_time, arrival_time, frequency, status, route_description, created_at
+        FROM schedules 
+        ORDER BY created_at DESC
+        """
+    )
+    schedules = cursor.fetchall()
+    cursor.close()
+    return schedules
+
+def update_schedule1(schedule_id, train_number, train_name, start_station, end_station, departure_time, arrival_time, frequency, status, route_description):
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        UPDATE schedules 
+        SET train_number=%s, train_name=%s, start_station=%s, end_station=%s, 
+            departure_time=%s, arrival_time=%s, frequency=%s, status=%s, route_description=%s
+        WHERE id=%s
+        """,
+        (train_number, train_name, start_station, end_station, departure_time, arrival_time, frequency, status, route_description, schedule_id)
+    )
+    mysql.connection.commit()
+    cursor.close()
+
+def delete_schedule(schedule_id):
+    cursor = mysql.connection.cursor()
+    cursor.execute("DELETE FROM schedules WHERE id=%s", (schedule_id,))
+    mysql.connection.commit()
+    cursor.close()
 
 
 

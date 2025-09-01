@@ -155,7 +155,172 @@ def get_all_schedules():
     return schedules
 
 
+def generate_tracking_id():
+    """Generate a unique tracking ID"""
+    year = datetime.now().year
+    random_part = ''.join(random.choices(string.digits, k=3))
+    return f"LF{year}{random_part}"
 
+def create_lost_item_report(user_id, item_name, category, location, date_lost, description, contact):
+    """Create a new lost item report"""
+    cursor = mysql.connection.cursor()
+    
+
+    tracking_id = generate_tracking_id()
+    
+
+    while True:
+        cursor.execute("SELECT id FROM lost_items WHERE tracking_id = %s", (tracking_id,))
+        if not cursor.fetchone():
+            break
+        tracking_id = generate_tracking_id()
+    
+    cursor.execute(
+        """
+        INSERT INTO lost_items 
+        (user_id, item_name, category, location, date_lost, description, contact_info, tracking_id, status) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'pending')
+        """,
+        (user_id, item_name, category, location, date_lost, description, contact, tracking_id)
+    )
+    mysql.connection.commit()
+    cursor.close()
+    
+    return tracking_id
+
+def get_lost_item_by_tracking_id(tracking_id):
+    """Get lost item details by tracking ID"""
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        SELECT id, user_id, item_name, category, location, date_lost, 
+               description, contact_info, status, tracking_id, created_at
+        FROM lost_items 
+        WHERE tracking_id = %s
+        """,
+        (tracking_id,)
+    )
+    result = cursor.fetchone()
+    cursor.close()
+    
+    if result:
+        return {
+            'id': result[0],
+            'user_id': result[1],
+            'item_name': result[2],
+            'category': result[3],
+            'location': result[4],
+            'date_lost': result[5],
+            'description': result[6],
+            'contact_info': result[7],
+            'status': result[8],
+            'tracking_id': result[9],
+            'created_at': result[10]
+        }
+    return None
+
+def get_user_lost_items(user_id):
+    """Get all lost items reported by a user"""
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        SELECT id, item_name, category, location, date_lost, 
+               description, contact_info, status, tracking_id, created_at
+        FROM lost_items 
+        WHERE user_id = %s 
+        ORDER BY created_at DESC
+        """,
+        (user_id,)
+    )
+    items = cursor.fetchall()
+    cursor.close()
+    return items
+
+def update_lost_item_status(item_id, new_status):
+    """Update the status of a lost item"""
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        "UPDATE lost_items SET status = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s",
+        (new_status, item_id)
+    )
+    mysql.connection.commit()
+    cursor.close()
+
+
+def get_user_upcoming_trips(user_id):
+    """Get upcoming trips for a user"""
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        SELECT id, ticket_type, source, destination, departure_date,
+               return_date, passengers, class, created_at
+        FROM bookings
+        WHERE user_id = %s AND departure_date >= CURDATE()
+        ORDER BY departure_date ASC
+        LIMIT 5
+        """,
+        (user_id,)
+    )
+    trips = cursor.fetchall()
+    cursor.close()
+    return trips
+
+def get_user_recent_activity(user_id):
+    """Get recent booking activity for a user"""
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        SELECT id, ticket_type, source, destination, departure_date, created_at
+        FROM bookings
+        WHERE user_id = %s
+        ORDER BY created_at DESC
+        LIMIT 5
+        """,
+        (user_id,)
+    )
+    activities = cursor.fetchall()
+    cursor.close()
+    return activities
+
+def create_notification(user_id, title, message, notification_type='info'):
+    """Create a notification for a user"""
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        INSERT INTO notifications (user_id, title, message, type, is_read, created_at)
+        VALUES (%s, %s, %s, %s, 0, NOW())
+        """,
+        (user_id, title, message, notification_type)
+    )
+    mysql.connection.commit()
+    cursor.close()
+
+def get_user_notifications(user_id, limit=5):
+    """Get notifications for a user"""
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        SELECT id, title, message, type, is_read, created_at
+        FROM notifications
+        WHERE user_id = %s
+        ORDER BY created_at DESC
+        LIMIT %s
+        """,
+        (user_id, limit)
+    )
+    notifications = cursor.fetchall()
+    cursor.close()
+    return notifications
+
+def mark_notification_as_read(notification_id, user_id):
+    """Mark a notification as read"""
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        "UPDATE notifications SET is_read = 1 WHERE id = %s AND user_id = %s",
+        (notification_id, user_id)
+    )
+    mysql.connection.commit()
+    cursor.close()
 
 
 

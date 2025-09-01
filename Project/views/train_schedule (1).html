@@ -369,10 +369,10 @@
     </div>
 
     <script>
-        // Global variables
+        
         let currentRoute = 'all';
 
-        // Get schedule data from backend with error handling
+        
         const scheduleData = [
             {% for schedule in schedules %}
             {
@@ -390,7 +390,7 @@
             {% endfor %}
         ];
 
-        // Utility functions
+        
         function getStatusClass(status) {
             const statusMap = {
                 'active': 'status-on-time',
@@ -479,13 +479,13 @@
         function showRoute(route) {
             currentRoute = route;
             
-            // Update active tab
+            
             document.querySelectorAll('.route-tab').forEach(tab => {
                 tab.classList.remove('active');
             });
             event.target.classList.add('active');
             
-            // Filter and display schedules
+            
             let filteredData = scheduleData;
             if (route !== 'all') {
                 filteredData = scheduleData.filter(s => {
@@ -506,7 +506,7 @@
             
             let filteredData = scheduleData;
             
-            // Filter by route
+            
             if (routeFilter) {
                 const routeParts = routeFilter.split('-');
                 filteredData = filteredData.filter(s => 
@@ -516,7 +516,7 @@
                 );
             }
             
-            // Filter by status
+            
             if (statusFilter) {
                 filteredData = filteredData.filter(s => s.status === statusFilter);
             }
@@ -547,11 +547,11 @@
         }
 
         function refreshSchedules() {
-            // Show loading state
+            
             const grid = document.getElementById('scheduleGrid');
             grid.innerHTML = '<div style="text-align: center; padding: 40px;">Refreshing schedules...</div>';
             
-            // Refresh the page after a brief delay
+            
             setTimeout(() => {
                 location.reload();
             }, 500);
@@ -578,3 +578,4 @@
     </script>
 </body>
 </html>
+

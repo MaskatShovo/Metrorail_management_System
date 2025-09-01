@@ -322,8 +322,26 @@ def mark_notification_as_read(notification_id, user_id):
     mysql.connection.commit()
     cursor.close()
 
+def get_admin_by_credentials(admin_id, password):
+    cursor = mysql.connection.cursor()
+    password_hash = hashlib.sha256(password.encode()).hexdigest()
+    cursor.execute(
+        "SELECT id FROM admins WHERE id=%s AND password=%s",
+        (admin_id, password_hash)
+    )
+    admin = cursor.fetchone()
+    cursor.close()
+    return admin
 
-
+def create_admin(admin_id, password):
+    cursor = mysql.connection.cursor()
+    password_hash = hashlib.sha256(password.encode()).hexdigest()
+    cursor.execute(
+        "INSERT INTO admins (id, password) VALUES (%s, %s)",
+        (admin_id, password_hash)
+    )
+    mysql.connection.commit()
+    cursor.close()
 
 
 

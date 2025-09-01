@@ -140,6 +140,20 @@ def delete_booking(booking_id, user_id):
     mysql.connection.commit()
     cursor.close()
 
+def get_all_schedules():
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        SELECT id, train_number, train_name, start_station, end_station, 
+               departure_time, arrival_time, frequency, status, route_description, created_at
+        FROM schedules 
+        ORDER BY created_at DESC
+        """
+    )
+    schedules = cursor.fetchall()
+    cursor.close()
+    return schedules
+
 
 
 

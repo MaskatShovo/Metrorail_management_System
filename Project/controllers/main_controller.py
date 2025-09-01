@@ -1,7 +1,16 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash , jsonify,session
 from models.user_model import create_user, get_user_by_email_password, get_user_by_id, update_user, delete_user
     
-
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import inch
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, Image
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib import colors
+from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
+import qrcode
+import io
+from datetime import datetime
+from flask import send_file
 main_routes = Blueprint("main_routes", __name__)
 
 @main_routes.route("/")

@@ -639,17 +639,17 @@
         return;
       }
       
-      // Calculate metro journey time
-      const stationDistance = Math.abs(getStationIndex(fromStation) - getStationIndex(toStation));
-      const travelTimeMinutes = stationDistance * 3; // 3 minutes per station
       
-      // Waiting time for metro (platform + boarding)
+      const stationDistance = Math.abs(getStationIndex(fromStation) - getStationIndex(toStation));
+      const travelTimeMinutes = stationDistance * 3; 
+      
+      
       const hour = parseInt(time.split(':')[0]);
-      let waitingTime = 5; // Base waiting time
+      let waitingTime = 5; 
       
       // Peak hours: longer waiting times
       if ((hour >= 7 && hour <= 10) || (hour >= 17 && hour <= 20)) {
-        waitingTime = 8; // Peak hour waiting
+        waitingTime = 8; 
       }
       
       const totalMinutes = travelTimeMinutes + waitingTime + buffer;
@@ -706,7 +706,7 @@
       calculateTravel();
     });
     
-    // Real-time calculation on input change
+    
     document.querySelectorAll('input, select').forEach(element => {
       element.addEventListener('change', function() {
         if (document.getElementById('fromStation').value && 
@@ -720,3 +720,4 @@
 </body>
 
 </html>
+

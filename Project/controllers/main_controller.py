@@ -541,6 +541,143 @@ def time_calculator():
     return render_template("time_calculator.html")
 
 
+@main_routes.route("/lost_found")
+def lost_found():
+    if "user" not in session:
+        flash("Please log in first", "error")
+        return redirect(url_for("main_routes.login"))
+    
+    return render_template("lost_found.html")
+
+@main_routes.route("/report_lost_item", methods=["POST"])
+def report_lost_item():
+    if "user" not in session:
+        flash("Please log in first", "error")
+        return redirect(url_for("main_routes.login"))
+    
+    try:
+        user_id = session["user"]["id"]
+        item_name = request.form.get("itemName").strip()
+        category = request.form.get("category").strip()
+        location = request.form.get("location").strip()
+        date_lost = request.form.get("date")
+        description = request.form.get("description", "").strip()
+        contact = request.form.get("contact").strip()
+        
+        if not all([item_name, category, location, date_lost, contact]):
+            flash("Please fill in all required fields.", "error")
+            return redirect(url_for("main_routes.lost_found"))
+        
+        tracking_id = create_lost_item_report(user_id, item_name, category, location, date_lost, description, contact)
+        flash(f"Item reported successfully! Your tracking ID is: {tracking_id}. Please save this ID to track your item status.", "success")
+        return redirect(url_for("main_routes.lost_found"))
+        
+    except Exception as e:
+        flash(f"Failed to report item: {str(e)}", "error")
+        return redirect(url_for("main_routes.lost_found"))
+
+@main_routes.route("/track_lost_item", methods=["POST"])
+def track_lost_item():
+    if "user" not in session:
+        flash("Please log in first", "error")
+        return redirect(url_for("main_routes.login"))
+    
+    tracking_id = request.form.get("trackingId", "").strip().upper()
+    
+    if not tracking_id:
+        flash("Please enter a tracking ID", "error")
+        return redirect(url_for("main_routes.lost_found"))
+    
+    tracking_result = get_lost_item_by_tracking_id(tracking_id)
+    
+    if not tracking_result:
+        flash("Tracking ID not found. Please check your ID and try again.", "error")
+        return render_template("lost_found.html", tracking_result=None)
+    
+    return render_template("lost_found.html", tracking_result=tracking_result)
+
+
+
+@main_routes.route("/userpage")
+def userpage():
+    if "user" not in session:
+        flash("Please log in first", "error")
+        return redirect(url_for("main_routes.login"))
+
+    user_id = session["user"]["id"]
+    db_user = get_user_by_id(user_id)
+    
+    if not db_user:
+        session.clear()
+        flash("Account no longer exists.", "error")
+        return redirect(url_for("main_routes.home"))
+
+    user = {
+        "id": db_user[0],
+        "name": db_user[1],
+        "nid": db_user[2],
+        "email": db_user[3],
+    }
+
+
+    upcoming_trips = get_user_upcoming_trips(user_id)
+    recent_activity = get_user_recent_activity(user_id)
+    notifications = get_user_notifications(user_id)
+    
+    
+    processed_trips = []
+    for trip in upcoming_trips:
+        from datetime import datetime, date
+        departure_date = trip[4]
+        if isinstance(departure_date, str):
+            departure_date = datetime.strptime(departure_date, '%Y-%m-%d').date()
+        
+   
+        days_until = (departure_date - date.today()).days
+        
+        processed_trips.append({
+            'id': trip[0],
+            'ticket_type': trip[1],
+            'source': trip[2],
+            'destination': trip[3],
+            'departure_date': departure_date,
+            'return_date': trip[5],
+            'passengers': trip[6],
+            'travel_class': trip[7],
+            'days_until': days_until
+        })
+
+    # Process recent activity
+    processed_activity = []
+    for activity in recent_activity:
+        processed_activity.append({
+            'id': activity[0],
+            'ticket_type': activity[1],
+            'source': activity[2],
+            'destination': activity[3],
+            'departure_date': activity[4],
+            'booking_date': activity[5]
+        })
+
+    return render_template("userpage.html", 
+                         user=user, 
+                         upcoming_trips=processed_trips,
+                         recent_activity=processed_activity,
+                         notifications=notifications)
+
+
+@main_routes.route("/mark_notification_read/<int:notification_id>", methods=["POST"])
+def mark_notification_read(notification_id):
+    if "user" not in session:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    user_id = session["user"]["id"]
+    try:
+        mark_notification_as_read(notification_id, user_id)
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 
 

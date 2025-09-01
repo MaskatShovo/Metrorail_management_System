@@ -773,7 +773,26 @@ def update_schedule_route():
         return jsonify({"error": str(e)}), 500
 
 
-
+def get_station_name(value):
+    station_names = {
+        "uttara-north": "Uttara North",
+        "uttara-center": "Uttara Center",
+        "uttara-south": "Uttara South",
+        "pallabi": "Pallabi",
+        "mirpur-11": "Mirpur 11",
+        "mirpur-10": "Mirpur 10",
+        "kazipara": "Kazipara",
+        "shewrapara": "Shewrapara",
+        "agargaon": "Agargaon",
+        "bijoy-sarani": "Bijoy Sarani",
+        "farmgate": "Farmgate",
+        "karwan-bazar": "Karwan Bazar",
+        "shahbagh": "Shahbagh",
+        "dhaka-university": "Dhaka University",
+        "bangladesh-secretariat": "Bangladesh Secretariat",
+        "motijheel": "Motijheel",
+    }
+    return station_names.get(value, value)
 
 
 

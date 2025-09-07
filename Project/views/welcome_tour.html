@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Tour - Metro Rail Management System</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+        
+        :root {
+            --bg: #f8fafc;
+            --text: #1e293b;
+            --muted: #64748b;
+            --brand: #059669;
+            --brand-600: #047857;
+            --brand-light: #d1fae5;
+            --surface: #ffffff;
+            --border: #e2e8f0;
+            --warn: #f59e0b;
+            --good: #10b981;
+            --accent: #ef4444;
+            --gradient-start: #059669;
+            --gradient-end: #34d399;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+            opacity: 0.03;
+            z-index: -1;
+            animation: gradientShift 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes gradientShift {
+            0% { transform: translateX(-50px) translateY(-30px) rotate(0deg); }
+            100% { transform: translateX(50px) translateY(30px) rotate(2deg); }
+        }
+
+        .tour-container {
+            display: flex;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Header */
+        .tour-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: var(--surface);
+            padding: 15px 30px;
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-section img {
+            height: 40px;
+            width: auto;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.1));
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-3px); }
+        }
+
+        .logo-text {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--brand), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .skip-tour {
+            padding: 8px 20px;
+            background: transparent;
+            border: 2px solid var(--muted);
+            border-radius: 25px;
+            color: var(--muted);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .skip-tour:hover {
+            border-color: var(--brand);
+            color: var(--brand);
+        }
+
+        /* Main Content */
+        .tour-content {
+            flex: 1;
+            display: flex;
+            padding-top: 80px;
+        }
+
+        .tour-sidebar {
+            width: 300px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 30px 20px;
+            overflow-y: auto;
+        }
+
+        .tour-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            position: relative;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--brand), var(--accent));
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 16.67%; /* 1/6 for first step */
+        }
+
+        .step-counter {
+            text-align: center;
+            margin-top: 10px;
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        /* Tour Steps */
+        .tour-step {
+            display: none;
+            text-align: center;
+            max-width: 700px;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        .tour-step.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .step-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--brand), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .step-description {
+            font-size: 1.2rem;
+            color: var(--muted);
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .step-image-container {
+            width: 100%;
+            max-width: 500px;
+            height: 300px;
+            background: var(--surface);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            margin: 0 auto 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .step-image-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(5,150,105,0.05) 0%, transparent 70%);
+            animation: imageRotate 15s linear infinite;
+        }
+
+        @keyframes imageRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .step-image {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .image-placeholder {
+            width: 200px;
+            height: 150px;
+            background: linear-gradient(135deg, var(--brand-light), var(--surface));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--brand);
+            font-size: 3rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Navigation */
+        .tour-navigation {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-previous {
+            background: transparent;
+            border: 2px solid var(--muted);
+            color: var(--muted);
+        }
+
+        .btn-previous:hover:not(:disabled) {
+            border-color: var(--brand);
+            color: var(--brand);
+        }
+
+        .btn-previous:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, var(--brand), var(--brand-600));
+            color: white;
+            border: none;
+            box-shadow: 0 8px 25px rgba(5,150,105,0.3);
+        }
+
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(5,150,105,0.4);
+        }
+
+        .btn-finish {
+            background: linear-gradient(135deg, var(--accent), #dc2626);
+            color: white;
+            border: none;
+            box-shadow: 0 8px 25px rgba(239,68,68,0.3);
+        }
+
+        .btn-finish:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(239,68,68,0.4);
+        }
+
+        /* Sidebar Steps List */
+        .steps-list {
+            list-style: none;
+        }
+
+        .step-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .step-item.completed {
+            background: var(--brand-light);
+            border-left-color: var(--good);
+            color: var(--good);
+        }
+
+        .step-item.active {
+            background: var(--brand-light);
+            border-left-color: var(--brand);
+            color: var(--brand);
+            font-weight: 600;
+        }
+
+        .step-item:hover:not(.completed) {
+            background: var(--border);
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            background: var(--muted);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 25px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .step-item.active .step-number {
+            background: var(--brand);
+        }
+
+        .step-item.completed .step-number {
+            background: var(--good);
+        }
+
+        .step-item.completed .step-number::before {
+            content: '✓';
+        }
+
+        .step-item.completed .step-number {
+            font-size: 0.7rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .tour-content {
+                flex-direction: column;
+            }
+
+            .tour-sidebar {
+                width: 100%;
+                height: auto;
+                max-height: 200px;
+                order: 2;
+            }
+
+            .tour-main {
+                order: 1;
+                padding: 20px;
+            }
+
+            .step-title {
+                font-size: 2rem;
+            }
+
+            .step-description {
+                font-size: 1rem;
+            }
+
+            .step-image-container {
+                height: 250px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="tour-container">
+        <!-- Header -->
+        <div class="tour-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-RCmcphX4mo26kjSE8kGXPrxOFmO8sM.png" alt="Metro Rail Logo">
+                    <div class="logo-text">MetroRail Welcome Tour</div>
+                </div>
+                <button class="skip-tour" onclick="skipTour()">Skip Tour</button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="tour-content">
+            <!-- Sidebar -->
+            <div class="tour-sidebar">
+                <h3 style="margin-bottom: 20px; color: var(--brand);">Tour Steps</h3>
+                <ul class="steps-list">
+                    <li class="step-item active" data-step="1">
+                        <span class="step-number">1</span>
+                        Getting Started
+                    </li>
+                    <li class="step-item" data-step="2">
+                        <span class="step-number">2</span>
+                        Creating Account
+                    </li>
+                    <li class="step-item" data-step="3">
+                        <span class="step-number">3</span>
+                        Booking Tickets
+                    </li>
+                    <li class="step-item" data-step="4">
+                        <span class="step-number">4</span>
+                        Managing Bookings
+                    </li>
+                    <li class="step-item" data-step="5">
+                        <span class="step-number">5</span>
+                        Train Schedules
+                    </li>
+                    <li class="step-item" data-step="6">
+                        <span class="step-number">6</span>
+                        Additional Features
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Main Tour Area -->
+            <div class="tour-main">
+                <!-- Progress Bar -->
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="step-counter">
+                        Step <span id="currentStep">1</span> of <span id="totalSteps">6</span>
+                    </div>
+                </div>
+
+                <!-- Tour Steps -->
+                <div class="tour-step active" data-step="1">
+                    <h2 class="step-title">Welcome to MetroRail! 🚊</h2>
+                    <p class="step-description">
+                        Get ready to explore the amazing features of our Metro Rail Management System. 
+                        This quick tour will show you how to make the most of your journey with us.
+                    </p>
+                    <div class="step-image-container">
+                        <div class="image-placeholder">🎯</div>
+                        <!-- Replace with: <img src="path-to-welcome-image.jpg" alt="Welcome" class="step-image"> -->
+                    </div>
+                </div>
+
+                <div class="tour-step" data-step="2">
+                    <h2 class="step-title">Creating Your Account 📝</h2>
+                    <p class="step-description">
+                        Learn how to create your account with just a few simple steps. 
+                        All you need is your name, national ID, email, and a secure password.
+                    </p>
+                    <div class="step-image-container">
+                        <div class="image-placeholder">👤</div>
+                        <!-- Replace with: <img src="path-to-account-creation-image.jpg" alt="Account Creation" class="step-image"> -->
+                    </div>
+                </div>
+
+                <div class="tour-step" data-step="3">
+                    <h2 class="step-title">Booking Your Tickets 🎫</h2>
+                    <p class="step-description">
+                        Discover how easy it is to book tickets! Choose your stations, select travel dates, 
+                        pick your class, and you're ready to go. One-way or return - we've got you covered.
+                    </p>
+                    <div class="step-image-container">
+                        <div class="image-placeholder">🎟️</div>
+                        <!-- Replace with: <img src="path-to-booking-image.jpg" alt="Ticket Booking" class="step-image"> -->
+                    </div>
+                </div>
+
+                <div class="tour-step" data-step="4">
+                    <h2 class="step-title">Managing Your Bookings 📱</h2>
+                    <p class="step-description">
+                        View your ticket history, download receipts, cancel bookings, and request refunds 
+                        - all from your personal dashboard. Stay in control of your travel plans.
+                    </p>
+                    <div class="step-image-container">
+                        <div class="image-placeholder">📋</div>
+                        <!-- Replace with: <img src="path-to-management-image.jpg" alt="Booking Management" class="step-image"> -->
+                    </div>
+                </div>
+
+                <div class="tour-step" data-step="5">
+                    <h2 class="step-title">Checking Train Schedules 🕒</h2>
+                    <p class="step-description">
+                        Stay updated with real-time train schedules, departure times, and route information. 
+                        Never miss your train with our comprehensive schedule system.
+                    </p>
+                    <div class="step-image-container">
+                        <div class="image-placeholder">🚇</div>
+                        <!-- Replace with: <img src="path-to-schedule-image.jpg" alt="Train Schedules" class="step-image"> -->
+                    </div>
+                </div>
+
+                <div class="tour-step" data-step="6">
+                    <h2 class="step-title">Additional Features ⚡</h2>
+                    <p class="step-description">
+                        Explore fare calculator, time calculator, lost & found reporting, feedback system, 
+                        and many more features designed to make your metro experience seamless and enjoyable.
+                    </p>
+                    <div class="step-image-container">
+                        <img src="{{ url_for('static', filename='images/additional-features.jpg') }}" alt="Additional Features" class="step-image">
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="tour-navigation">
+                    <button class="nav-btn btn-previous" id="prevBtn" onclick="previousStep()" disabled>
+                        ← Previous
+                    </button>
+                    <button class="nav-btn btn-next" id="nextBtn" onclick="nextStep()">
+                        Next →
+                    </button>
+                    <button class="nav-btn btn-finish" id="finishBtn" onclick="finishTour()" style="display: none;">
+                        Get Started! 🚀
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStepIndex = 1;
+        const totalSteps = 6;
+
+        function updateProgressBar() {
+            const progressFill = document.getElementById('progressFill');
+            const percentage = (currentStepIndex / totalSteps) * 100;
+            progressFill.style.width = percentage + '%';
+        }
+
+        function updateStepCounter() {
+            document.getElementById('currentStep').textContent = currentStepIndex;
+        }
+
+        function updateSidebar() {
+            const stepItems = document.querySelectorAll('.step-item');
+            stepItems.forEach((item, index) => {
+                const stepNumber = index + 1;
+                item.classList.remove('active', 'completed');
+                
+                if (stepNumber === currentStepIndex) {
+                    item.classList.add('active');
+                } else if (stepNumber < currentStepIndex) {
+                    item.classList.add('completed');
+                }
+            });
+        }
+
+        function showStep(stepNumber) {
+            // Hide all steps
+            document.querySelectorAll('.tour-step').forEach(step => {
+                step.classList.remove('active');
+            });
+            
+            // Show current step
+            const currentStep = document.querySelector(`[data-step="${stepNumber}"]`);
+            if (currentStep) {
+                currentStep.classList.add('active');
+            }
+            
+            // Update navigation buttons
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const finishBtn = document.getElementById('finishBtn');
+            
+            prevBtn.disabled = stepNumber === 1;
+            
+            if (stepNumber === totalSteps) {
+                nextBtn.style.display = 'none';
+                finishBtn.style.display = 'block';
+            } else {
+                nextBtn.style.display = 'block';
+                finishBtn.style.display = 'none';
+            }
+        }
+
+        function nextStep() {
+            if (currentStepIndex < totalSteps) {
+                currentStepIndex++;
+                showStep(currentStepIndex);
+                updateProgressBar();
+                updateStepCounter();
+                updateSidebar();
+            }
+        }
+
+        function previousStep() {
+            if (currentStepIndex > 1) {
+                currentStepIndex--;
+                showStep(currentStepIndex);
+                updateProgressBar();
+                updateStepCounter();
+                updateSidebar();
+            }
+        }
+
+        function jumpToStep(stepNumber) {
+            if (stepNumber >= 1 && stepNumber <= totalSteps) {
+                currentStepIndex = stepNumber;
+                showStep(currentStepIndex);
+                updateProgressBar();
+                updateStepCounter();
+                updateSidebar();
+            }
+        }
+
+        function finishTour() {
+            // You can redirect to the main dashboard or show a completion message
+            alert('🎉 Welcome tour completed! You\'re now ready to use MetroRail.');
+            // Redirect to main page or dashboard
+            window.location.href = '/'; // or wherever you want to redirect
+        }
+
+        function skipTour() {
+            if (confirm('Are you sure you want to skip the welcome tour?')) {
+                window.location.href = '/'; // or wherever you want to redirect
+            }
+        }
+
+        // Add click handlers to sidebar items
+        document.addEventListener('DOMContentLoaded', function() {
+            const stepItems = document.querySelectorAll('.step-item');
+            stepItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const stepNumber = parseInt(this.getAttribute('data-step'));
+                    jumpToStep(stepNumber);
+                });
+            });
+
+            // Keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowRight' || e.key === ' ') {
+                    e.preventDefault();
+                    nextStep();
+                } else if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    previousStep();
+                } else if (e.key === 'Escape') {
+                    skipTour();
+                }
+            });
+
+            // Initialize
+            updateProgressBar();
+            updateStepCounter();
+            updateSidebar();
+        });
+    </script>
+</body>
+</html>

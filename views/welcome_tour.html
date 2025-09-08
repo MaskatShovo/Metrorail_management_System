@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metro Rail - Get Started</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+        
+        :root {
+            --bg: #f8fafc;
+            --text: #1e293b;
+            --muted: #64748b;
+            --brand: #059669;
+            --brand-600: #047857;
+            --brand-light: #d1fae5;
+            --surface: #ffffff;
+            --border: #e2e8f0;
+            --accent: #ef4444;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            padding: 40px;
+            text-align: center;
+            background: var(--surface);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin: 20px;
+        }
+        
+        .train-image {
+            width: 100%;
+            max-width: 500px;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease;
+        }
+        
+        .train-image:hover {
+            transform: scale(1.02);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--brand), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        p {
+            font-size: 1.2rem;
+            color: var(--muted);
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+        
+        .get-started-btn {
+            display: inline-block;
+            padding: 18px 40px;
+            background: linear-gradient(135deg, var(--brand), var(--brand-600));
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(5,150,105,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .get-started-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .get-started-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(5,150,105,0.4);
+        }
+        
+        .get-started-btn:hover::before {
+            left: 100%;
+        }
+        
+        .get-started-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .container > * {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        
+        .container > *:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .container > *:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        .container > *:nth-child(4) {
+            animation-delay: 0.6s;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            p {
+                font-size: 1.1rem;
+            }
+            
+            .get-started-btn {
+                padding: 15px 30px;
+                font-size: 1.1rem;
+            }
+            
+            .train-image {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- <img src="/static/images/backg.jpg" alt="Feature_1" class="train-image"> -->
+         <img src="{{ url_for('static', filename='images/backg.png') }}" alt="Feature_1" class="train-image">
+        <h1>Welcome to Metro Rail</h1>
+        <p>Experience seamless urban transportation with our modern metro rail system. Fast, reliable, and connecting you to every corner of the city.</p>
+        <button class="get-started-btn" onclick="window.location.href='/w2'">Get Started</button>
+    </div>
+
+    <script>
+        function handleGetStarted() {
+            // Add a smooth click animation
+            const btn = document.querySelector('.get-started-btn');
+            btn.style.transform = 'scale(0.95)';
+            
+            setTimeout(() => {
+                btn.style.transform = '';
+                // You can add your navigation logic here
+                alert('Welcome to Metro Rail! Ready to begin your journey?');
+                // Example: window.location.href = '/dashboard';
+            }, 150);
+        }
+
+        // Add smooth scroll behavior and entrance animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add a subtle parallax effect to the image
+            const trainImage = document.querySelector('.train-image');
+            
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                trainImage.style.transform = `translateY(${scrolled * 0.1}px)`;
+            });
+            
+            // Add keyboard support for the button
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && document.activeElement.classList.contains('get-started-btn')) {
+                    handleGetStarted();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

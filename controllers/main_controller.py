@@ -698,7 +698,9 @@ def get_station_name(value):
     }
     return station_names.get(value, value)
 
-
+@main_routes.route("/test", methods=["GET", "POST"])
+def test():
+    return render_template("test.html")
 
 @main_routes.route("/lost_found")
 def lost_found():

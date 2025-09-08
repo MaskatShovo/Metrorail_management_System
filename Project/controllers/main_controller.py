@@ -835,10 +835,11 @@ def feedback():
     
     return render_template("feedback.html")
 
+
+
 @main_routes.route("/welcome_tour")
 def welcome_tour():
     return render_template("welcome_tour.html")
-
 
 
 

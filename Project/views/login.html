@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Metro Rail - Log In</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+    
+    :root {
+      --bg: #f8fafc;
+      --text: #1e293b;
+      --muted: #64748b;
+      --brand: #059669;
+      --brand-600: #047857;
+      --brand-light: #d1fae5;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --warn: #f59e0b;
+      --good: #10b981;
+      --accent: #ef4444;
+      --gradient-start: #059669;
+      --gradient-end: #34d399;
+    }
+    
+    html[data-theme="dark"] {
+      --bg: #0f172a;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --brand: #34d399;
+      --brand-600: #10b981;
+      --brand-light: #064e3b;
+      --surface: #1e293b;
+      --border: #334155;
+      --warn: #fbbf24;
+      --good: #34d399;
+      --accent: #f87171;
+      --gradient-start: #34d399;
+      --gradient-end: #059669;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+      opacity: 0.03;
+      z-index: -1;
+      animation: gradientShift 8s ease-in-out infinite alternate;
+    }
+    
+    @keyframes gradientShift {
+      0% { transform: translateX(-50px) translateY(-30px) rotate(0deg); }
+      100% { transform: translateX(50px) translateY(30px) rotate(2deg); }
+    }
+    
+   
+    header {
+      background: var(--surface);
+      padding: 15px 30px;
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+      backdrop-filter: blur(10px);
+    }
+    
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .logo-section img {
+      height: 50px;
+      width: auto;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.1));
+      animation: logoFloat 3s ease-in-out infinite;
+    }
+    
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+    }
+    
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .back-btn {
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 8px 16px;
+      border-radius: 25px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .back-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    .back-btn:hover {
+      color: var(--brand);
+      background: var(--brand-light);
+      transform: translateY(-2px);
+    }
+    
+    .back-btn:hover::before {
+      left: 100%;
+    }
+    
+
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 30px;
+    }
+    
+    .login-container {
+      background: var(--surface);
+      padding: 60px 40px;
+      border-radius: 20px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+      max-width: 450px;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    
+    .login-container::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(5,150,105,0.05) 0%, transparent 70%);
+      animation: containerRotate 20s linear infinite;
+    }
+    
+    @keyframes containerRotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .login-content {
+      position: relative;
+      z-index: 2;
+    }
+    
+    .login-title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 15px;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: titlePulse 2s ease-in-out infinite alternate;
+      text-align: center;
+    }
+    
+    @keyframes titlePulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.02); }
+    }
+    
+    .login-subtitle {
+      font-size: 1.1rem;
+      color: var(--muted);
+      margin-bottom: 40px;
+      font-weight: 400;
+      text-align: center;
+    }
+    
+    .form-group {
+      margin-bottom: 25px;
+    }
+    
+    .form-label {
+      display: block;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+      font-size: 1rem;
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 15px 20px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: 'Poppins', sans-serif;
+      background: var(--surface);
+      color: var(--text);
+      transition: all 0.3s ease;
+    }
+    
+    .form-input:focus {
+      outline: none;
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(5,150,105,0.1);
+      transform: translateY(-2px);
+    }
+    
+    .form-input::placeholder {
+      color: var(--muted);
+    }
+    
+    .login-btn {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, var(--brand), var(--brand-600));
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 25px rgba(5,150,105,0.3);
+      margin-top: 10px;
+    }
+    
+    .login-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(5,150,105,0.4);
+    }
+    
+    .login-btn:active {
+      transform: translateY(-1px);
+    }
+    
+    .form-footer {
+      text-align: center;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    
+    .form-footer a {
+      color: var(--brand);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .form-footer a:hover {
+      color: var(--brand-600);
+      text-decoration: underline;
+    }
+    
+ 
+    footer {
+      background: linear-gradient(135deg, var(--surface) 0%, var(--brand-light) 100%);
+      text-align: center;
+      padding: 30px;
+      border-top: 1px solid var(--border);
+    }
+    
+    footer p {
+      font-weight: 500;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+    
+
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 20px;
+      }
+      
+      .login-container {
+        padding: 40px 30px;
+        margin: 20px;
+      }
+      
+      .login-title {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  
+  <header>
+    <div class="header-content">
+      <div class="logo-section">
+        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-RCmcphX4mo26kjSE8kGXPrxOFmO8sM.png" alt="Metro Rail Logo">
+        <div class="logo-text">MetroRail</div>
+      </div>
+      <a class="back-btn" href="{{ url_for('main_routes.home') }}">🏠 Back to Home</a>
+    </div>
+  </header>
+
+
+  <main>
+    <div class="login-container">
+      <div class="login-content">
+        <h1 class="login-title">Welcome Back! 🔑</h1>
+        <p class="login-subtitle">Sign in to access your Metro Rail account</p>
+        
+        <form method="POST" action="{{ url_for('main_routes.login') }}">
+          <div class="form-group">
+            <label for="name" class="form-label">👤 Email</label>
+            
+            <input type="email" id="name" name="email" class="form-input" placeholder="Email" required />
+          </div>
+          
+          <div class="form-group">
+            <label for="password" class="form-label">🔒 Password</label>
+            <input type="password" id="password" name="password" class="form-input" placeholder="Enter your password" required>
+          </div>
+          
+          <button type="submit" class="login-btn">🚀 Log In</button>
+        </form>
+        
+        <div class="form-footer">
+          <p>Don't have an account? <a href="create-account.html">Create one here</a></p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+
+  <footer>
+    <p>🚊 © 2025 Metro Rail Authority - Connecting Communities, Powering Progress</p>
+  </footer>
+</body>
+</html>

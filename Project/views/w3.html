@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metro Rail - Book Tickets</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+        
+        :root {
+            --bg: #f8fafc;
+            --text: #1e293b;
+            --muted: #64748b;
+            --brand: #3b82f6;
+            --brand-600: #2563eb;
+            --brand-light: #dbeafe;
+            --surface: #ffffff;
+            --border: #e2e8f0;
+            --accent: #f59e0b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 900px;
+            padding: 40px;
+            text-align: center;
+            background: var(--surface);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin: 20px;
+        }
+        
+        .ticket-image {
+            width: 100%;
+            max-width: 500px;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease;
+        }
+        
+        .ticket-image:hover {
+            transform: scale(1.02);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--brand), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .description {
+            font-size: 1.2rem;
+            color: var(--muted);
+            margin-bottom: 30px;
+            font-weight: 400;
+        }
+        
+        .instructions {
+            text-align: left;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            background: var(--brand-light);
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 4px solid var(--brand);
+        }
+        
+        .instructions h3 {
+            color: var(--brand);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+        
+        .step-number {
+            background: var(--brand);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        
+        .book-tickets-btn {
+            display: inline-block;
+            padding: 18px 40px;
+            background: linear-gradient(135deg, var(--brand), var(--brand-600));
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(59,130,246,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .book-tickets-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .book-tickets-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(59,130,246,0.4);
+        }
+        
+        .book-tickets-btn:hover::before {
+            left: 100%;
+        }
+        
+        .book-tickets-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .container > * {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        
+        .container > *:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .container > *:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        .container > *:nth-child(4) {
+            animation-delay: 0.6s;
+        }
+        
+        .container > *:nth-child(5) {
+            animation-delay: 0.8s;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .description {
+                font-size: 1.1rem;
+            }
+            
+            .book-tickets-btn {
+                padding: 15px 30px;
+                font-size: 1.1rem;
+            }
+            
+            .ticket-image {
+                height: 250px;
+            }
+            
+            .instructions {
+                padding: 20px;
+                text-align: center;
+            }
+            
+            .step {
+                justify-content: center;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="{{ url_for('static', filename='images/book.png') }}" alt="Book Metro Rail Tickets" class="ticket-image">
+        <h1>Book Your Metro Tickets</h1>
+        <p class="description">Quick and easy ticket booking for your metro rail journey. Choose your route, select your time, and travel with confidence.</p>
+        
+        <div class="instructions">
+            <h3>How to Book Your Tickets:</h3>
+            <div class="step">
+                <div class="step-number">1</div>
+                <div>Select your departure and destination stations from the route map</div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div>Choose your preferred travel date and time slot</div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div>Select the number of passengers and ticket type (adult/child/senior)</div>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <div>Review your booking details and total fare amount</div>
+            </div>
+            <div class="step">
+                <div class="step-number">5</div>
+                <div>Complete payment using your preferred method (card/wallet/UPI)</div>
+            </div>
+            <div class="step">
+                <div class="step-number">6</div>
+                <div>Receive your digital ticket via email and SMS confirmation</div>
+            </div>
+        </div>
+        
+        <button class="book-tickets-btn" onclick="window.location.href='/w4'">Next</button>
+
+    </div>
+
+    <script>
+        function handleBookTickets() {
+            // Add a smooth click animation
+            const btn = document.querySelector('.book-tickets-btn');
+            btn.style.transform = 'scale(0.95)';
+            
+            setTimeout(() => {
+                btn.style.transform = '';
+                // You can add your navigation logic here
+                alert('Redirecting to ticket booking system...');
+                // Example: window.location.href = '/book-tickets';
+            }, 150);
+        }
+
+        // Add smooth scroll behavior and entrance animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add a subtle parallax effect to the image
+            const ticketImage = document.querySelector('.ticket-image');
+            
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                ticketImage.style.transform = `translateY(${scrolled * 0.1}px)`;
+            });
+            
+            // Add keyboard support for the button
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && document.activeElement.classList.contains('book-tickets-btn')) {
+                    handleBookTickets();
+                }
+            });
+            
+            // Add hover effects to instruction steps
+            const steps = document.querySelectorAll('.step');
+            steps.forEach(step => {
+                step.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateX(5px)';
+                    this.style.transition = 'transform 0.2s ease';
+                });
+                
+                step.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateX(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

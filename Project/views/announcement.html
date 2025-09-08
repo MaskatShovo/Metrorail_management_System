@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Manage Announcements - Metro Rail Management System</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+    
+    :root {
+      --bg: #f8fafc;
+      --text: #1e293b;
+      --muted: #64748b;
+      --brand: #059669;
+      --brand-600: #047857;
+      --brand-light: #d1fae5;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --warn: #f59e0b;
+      --good: #10b981;
+      --accent: #ef4444;
+      --gradient-start: #059669;
+      --gradient-end: #34d399;
+    }
+    
+    html[data-theme="dark"] {
+      --bg: #0f172a;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --brand: #34d399;
+      --brand-600: #10b981;
+      --brand-light: #064e3b;
+      --surface: #1e293b;
+      --border: #334155;
+      --warn: #fbbf24;
+      --good: #34d399;
+      --accent: #f87171;
+      --gradient-start: #34d399;
+      --gradient-end: #059669;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+      opacity: 0.03;
+      z-index: -1;
+      animation: gradientShift 8s ease-in-out infinite alternate;
+    }
+    
+    @keyframes gradientShift {
+      0% { transform: translateX(-50px) translateY(-30px) rotate(0deg); }
+      100% { transform: translateX(50px) translateY(30px) rotate(2deg); }
+    }
+    
+    /* Header */
+    header {
+      background: var(--surface);
+      padding: 15px 30px;
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+    
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .logo-section img {
+      height: 50px;
+      width: auto;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.1));
+      animation: logoFloat 3s ease-in-out infinite;
+    }
+    
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+    }
+    
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    nav {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+    
+    nav a {
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 8px 16px;
+      border-radius: 25px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    nav a::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    nav a:hover {
+      color: var(--brand);
+      background: var(--brand-light);
+      transform: translateY(-2px);
+    }
+    
+    nav a:hover::before {
+      left: 100%;
+    }
+    
+    .theme-toggle {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+    }
+    
+    .theme-toggle:hover {
+      background: var(--brand-light);
+      border-color: var(--brand);
+    }
+    
+    /* Main Content */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 30px;
+    }
+    
+    .page-title {
+      font-size: 3rem;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: titlePulse 2s ease-in-out infinite alternate;
+    }
+    
+    @keyframes titlePulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.02); }
+    }
+    
+    .page-subtitle {
+      text-align: center;
+      font-size: 1.2rem;
+      color: var(--muted);
+      margin-bottom: 50px;
+    }
+    
+    /* Form Section */
+    .form-section {
+      background: var(--surface);
+      padding: 40px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      margin-bottom: 50px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .form-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--brand), var(--accent));
+    }
+    
+    .form-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 30px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .form-grid {
+      display: grid;
+      gap: 25px;
+      grid-template-columns: 1fr 2fr;
+      margin-bottom: 30px;
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+    
+    label {
+      font-weight: 600;
+      color: var(--text);
+      font-size: 1rem;
+    }
+    
+    input, select, textarea {
+      padding: 15px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      transition: all 0.3s ease;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(5,150,105,0.1);
+    }
+    
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 15px 30px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      border: 2px solid var(--brand);
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--brand), var(--brand-600));
+      color: white;
+      box-shadow: 0 8px 25px rgba(5,150,105,0.3);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(5,150,105,0.4);
+    }
+    
+    .btn-danger {
+      background: linear-gradient(135deg, var(--accent), #dc2626);
+      color: white;
+      border-color: var(--accent);
+      box-shadow: 0 8px 25px rgba(239,68,68,0.3);
+    }
+    
+    .btn-danger:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(239,68,68,0.4);
+    }
+    
+    /* Announcements List */
+    .announcements-section {
+      margin-top: 50px;
+    }
+    
+    .section-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 50px;
+      color: var(--text);
+      position: relative;
+    }
+    
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--brand), var(--accent));
+      border-radius: 2px;
+    }
+    
+    .announcement {
+      border: 1px solid var(--border);
+      padding: 25px;
+      margin-bottom: 20px;
+      border-radius: 15px;
+      background: var(--surface);
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      animation: slideInUp 0.5s ease-out;
+    }
+    
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .announcement::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 100%;
+      background: linear-gradient(180deg, var(--brand), var(--accent));
+    }
+    
+    .announcement:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    
+    .announcement-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 15px;
+    }
+    
+    .announcement-type {
+      color: var(--brand);
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 5px 15px;
+      background: var(--brand-light);
+      border-radius: 20px;
+      display: inline-block;
+    }
+    
+    .announcement-date {
+      color: var(--muted);
+      font-style: italic;
+      font-size: 0.9rem;
+    }
+    
+    .announcement-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+    
+    .announcement-message {
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+    
+    .announcement-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+    
+    .btn-small {
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      border-radius: 20px;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+    
+    .empty-state-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 20px;
+      }
+      
+      nav {
+        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      .page-title {
+        font-size: 2.5rem;
+      }
+      
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .form-section {
+        padding: 25px;
+      }
+      
+      .announcement-header {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .announcement-actions {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="header-content">
+      <div class="logo-section">
+        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-RCmcphX4mo26kjSE8kGXPrxOFmO8sM.png" alt="Metro Rail Logo">
+        <div class="logo-text">MetroRail</div>
+      </div>
+      <nav>
+        <a href="{{ url_for('main_routes.admin_dashboard') }}">⬅️ Back</a>
+        <a href="#">📅 Schedules</a>
+        <a href="#">⬛ Admin</a>
+        <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="container">
+    <h1 class="page-title">📢 Manage Announcements</h1>
+    <p class="page-subtitle">Create and manage important announcements for Metro Rail passengers</p>
+
+    <!-- Add Announcement Form -->
+    <div class="form-section">
+      <h2 class="form-title">
+        ➕ Add New Announcement
+      </h2>
+      <form id="announcementForm">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="type">Announcement Type</label>
+            <select id="type" name="type" required>
+              <option value="">Select Type</option>
+              <option value="Service Update">🚊 Service Update</option>
+              <option value="Maintenance">🔧 Maintenance</option>
+              <option value="Emergency">🚨 Emergency</option>
+              <option value="General Info">ℹ️ General Info</option>
+              <option value="Promotion">🎉 Promotion</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" id="title" name="title" placeholder="Enter announcement title" required>
+          </div>
+          <div class="form-group full-width">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" placeholder="Enter detailed announcement message" required></textarea>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">
+          🚀 Publish Announcement
+        </button>
+      </form>
+    </div>
+
+    <!-- Announcements List -->
+    <div class="announcements-section">
+      <h2 class="section-title">📋 Current Announcements</h2>
+      <div id="announcementsList">
+        <!-- Announcements will be dynamically added here -->
+      </div>
+    </div>
+  </div>
+
+<script>
+    // Remove localStorage code and replace with server communication
+    let announcements = [];
+
+    // Load announcements from server
+    function loadAnnouncements() {
+        fetch('/announcements_data')
+            .then(response => response.json())
+            .then(data => {
+                announcements = data;
+                renderAnnouncements();
+            })
+            .catch(error => console.error('Error loading announcements:', error));
+    }
+
+    // Form submission - send to server
+    document.getElementById('announcementForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        
+        fetch('/add_announcement', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                this.reset();
+                loadAnnouncements(); // Reload from server
+                
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = '✅ Published!';
+                submitBtn.style.background = 'linear-gradient(135deg, var(--good), #059669)';
+                
+                setTimeout(() => {
+                    submitBtn.textContent = originalText;
+                    submitBtn.style.background = '';
+                }, 2000);
+            } else {
+                alert('Error: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to add announcement');
+        });
+    });
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+        loadTheme();
+        loadAnnouncements(); // Load from server instead of localStorage
+    });
+</script>
+</body>
+</html>

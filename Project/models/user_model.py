@@ -1,0 +1,623 @@
+from flask_mysqldb import MySQL
+import hashlib
+from datetime import datetime
+import random
+import string
+
+mysql = None
+
+def init_db(app):
+    global mysql
+    mysql = MySQL(app)
+
+def create_user(name, nid, email, password):
+    cursor = mysql.connection.cursor()
+    password_hash = hashlib.sha256(password.encode()).hexdigest()
+
+    cursor.execute(
+        """
+        INSERT INTO users (name, nid, email, password)
+        VALUES (%s, %s, %s, %s)
+        """,
+        (name, nid, email, password_hash)
+    )
+
+    mysql.connection.commit()
+    cursor.close()
+
+def get_user_by_email_password(email, password):
+    cursor = mysql.connection.cursor()
+    password_hash = hashlib.sha256(password.encode()).hexdigest()
+    cursor.execute(
+        "SELECT id, name, nid, email FROM users WHERE email=%s AND password=%s",
+        (email, password_hash)
+    )
+    user = cursor.fetchone()
+    cursor.close()
+    return user
+
+def get_user_by_id(user_id):
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        "SELECT id, name, nid, email FROM users WHERE id=%s",
+        (user_id,)
+    )
+    user = cursor.fetchone()
+    cursor.close()
+    return user
+
+def update_user(user_id, name, nid, email, new_password=None):
+    cursor = mysql.connection.cursor()
+    if new_password:
+        import hashlib
+        password_hash = hashlib.sha256(new_password.encode()).hexdigest()
+        cursor.execute(
+            """
+            UPDATE users
+            SET name=%s, nid=%s, email=%s, password=%s
+            WHERE id=%s
+            """,
+            (name, nid, email, password_hash, user_id)
+        )
+    else:
+        cursor.execute(
+            """
+            UPDATE users
+            SET name=%s, nid=%s, email=%s
+            WHERE id=%s
+            """,
+            (name, nid, email, user_id)
+        )
+    mysql.connection.commit()
+    cursor.close()
+
+def delete_user(user_id):
+    cursor = mysql.connection.cursor()
+    
+    cursor.execute("DELETE FROM bookings WHERE user_id=%s", (user_id,))
+    cursor.execute("DELETE FROM feedbacks WHERE user_id=%s", (user_id,))
+    cursor.execute("DELETE FROM users WHERE id=%s", (user_id,))
+    mysql.connection.commit()
+    cursor.close()
+
+
+def create_booking(user_id, ticket_type, source, destination, departure_date, return_date, passengers, travel_class, fare):
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        INSERT INTO bookings
+        (user_id, ticket_type, source, destination, departure_date, return_date, passengers, class, fare, points)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """,
+        (user_id, ticket_type, source, destination, departure_date, return_date, passengers, travel_class, fare, 10)
+    )
+    mysql.connection.commit()
+    cursor.close()
+
+
+def get_user_bookings(user_id):
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        SELECT id, user_id, ticket_type, source, destination, departure_date,
+        return_date, passengers, class, created_at, fare
+        FROM bookings
+        WHERE user_id = %s
+        ORDER BY created_at DESC
+        """,
+        (user_id,)
+    )
+    bookings = cursor.fetchall()
+    cursor.close()
+    return bookings
+
+
+
+
+def get_booking_by_id(booking_id, user_id):
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        SELECT id, ticket_type, source, destination, departure_date,
+        return_date, passengers, class, created_at, fare
+        FROM bookings
+        WHERE id = %s AND user_id = %s
+        """,
+        (booking_id, user_id)
+    )
+    booking = cursor.fetchone()
+    cursor.close()
+    return booking
+
+
+
+def update_booking_status(booking_id, user_id, status):
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        "UPDATE bookings SET status = %s WHERE id = %s AND user_id = %s",
+        (status, booking_id, user_id)
+    )
+    mysql.connection.commit()
+    cursor.close()
+
+def delete_booking(booking_id, user_id):
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        "DELETE FROM bookings WHERE id = %s AND user_id = %s",
+        (booking_id, user_id)
+    )
+    mysql.connection.commit()
+    cursor.close()
+
+
+def create_schedule(train_number, train_name, start_station, end_station, departure_time, arrival_time, frequency, status, route_description):
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        INSERT INTO schedules 
+        (train_number, train_name, start_station, end_station, departure_time, arrival_time, frequency, status, route_description) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """,
+        (train_number, train_name, start_station, end_station, departure_time, arrival_time, frequency, status, route_description)
+    )
+    mysql.connection.commit()
+    cursor.close()
+
+def get_all_schedules():
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        SELECT id, train_number, train_name, start_station, end_station, 
+               departure_time, arrival_time, frequency, status, route_description, created_at
+        FROM schedules 
+        ORDER BY created_at DESC
+        """
+    )
+    schedules = cursor.fetchall()
+    cursor.close()
+    return schedules
+
+def update_schedule1(schedule_id, train_number, train_name, start_station, end_station, departure_time, arrival_time, frequency, status, route_description):
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        UPDATE schedules 
+        SET train_number=%s, train_name=%s, start_station=%s, end_station=%s, 
+            departure_time=%s, arrival_time=%s, frequency=%s, status=%s, route_description=%s
+        WHERE id=%s
+        """,
+        (train_number, train_name, start_station, end_station, departure_time, arrival_time, frequency, status, route_description, schedule_id)
+    )
+    mysql.connection.commit()
+    cursor.close()
+
+def delete_schedule(schedule_id):
+    cursor = mysql.connection.cursor()
+    cursor.execute("DELETE FROM schedules WHERE id=%s", (schedule_id,))
+    mysql.connection.commit()
+    cursor.close()
+
+
+
+
+def get_admin_by_credentials(admin_id, password):
+    cursor = mysql.connection.cursor()
+    password_hash = hashlib.sha256(password.encode()).hexdigest()
+    cursor.execute(
+        "SELECT id FROM admins WHERE id=%s AND password=%s",
+        (admin_id, password_hash)
+    )
+    admin = cursor.fetchone()
+    cursor.close()
+    return admin
+
+def create_admin(admin_id, password):
+    cursor = mysql.connection.cursor()
+    password_hash = hashlib.sha256(password.encode()).hexdigest()
+    cursor.execute(
+        "INSERT INTO admins (id, password) VALUES (%s, %s)",
+        (admin_id, password_hash)
+    )
+    mysql.connection.commit()
+    cursor.close()
+
+
+
+def generate_tracking_id():
+    """Generate a unique tracking ID"""
+    year = datetime.now().year
+    random_part = ''.join(random.choices(string.digits, k=3))
+    return f"LF{year}{random_part}"
+
+def create_lost_item_report(user_id, item_name, category, location, date_lost, description, contact):
+    """Create a new lost item report"""
+    cursor = mysql.connection.cursor()
+    
+    # Generate unique tracking ID
+    tracking_id = generate_tracking_id()
+    
+    # Ensure tracking ID is unique
+    while True:
+        cursor.execute("SELECT id FROM lost_items WHERE tracking_id = %s", (tracking_id,))
+        if not cursor.fetchone():
+            break
+        tracking_id = generate_tracking_id()
+    
+    cursor.execute(
+        """
+        INSERT INTO lost_items 
+        (user_id, item_name, category, location, date_lost, description, contact_info, tracking_id, status) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'pending')
+        """,
+        (user_id, item_name, category, location, date_lost, description, contact, tracking_id)
+    )
+    mysql.connection.commit()
+    cursor.close()
+    
+    return tracking_id
+
+def get_lost_item_by_tracking_id(tracking_id):
+    """Get lost item details by tracking ID"""
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        SELECT id, user_id, item_name, category, location, date_lost, 
+               description, contact_info, status, tracking_id, created_at
+        FROM lost_items 
+        WHERE tracking_id = %s
+        """,
+        (tracking_id,)
+    )
+    result = cursor.fetchone()
+    cursor.close()
+    
+    if result:
+        return {
+            'id': result[0],
+            'user_id': result[1],
+            'item_name': result[2],
+            'category': result[3],
+            'location': result[4],
+            'date_lost': result[5],
+            'description': result[6],
+            'contact_info': result[7],
+            'status': result[8],
+            'tracking_id': result[9],
+            'created_at': result[10]
+        }
+    return None
+
+def get_user_lost_items(user_id):
+    """Get all lost items reported by a user"""
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        SELECT id, item_name, category, location, date_lost, 
+               description, contact_info, status, tracking_id, created_at
+        FROM lost_items 
+        WHERE user_id = %s 
+        ORDER BY created_at DESC
+        """,
+        (user_id,)
+    )
+    items = cursor.fetchall()
+    cursor.close()
+    return items
+
+def update_lost_item_status(item_id, new_status):
+    """Update the status of a lost item"""
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        "UPDATE lost_items SET status = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s",
+        (new_status, item_id)
+    )
+    mysql.connection.commit()
+    cursor.close()
+
+
+def get_user_upcoming_trips(user_id):
+    """Get upcoming trips for a user"""
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        SELECT id, ticket_type, source, destination, departure_date,
+               return_date, passengers, class, created_at
+        FROM bookings
+        WHERE user_id = %s AND departure_date >= CURDATE()
+        ORDER BY departure_date ASC
+        LIMIT 5
+        """,
+        (user_id,)
+    )
+    trips = cursor.fetchall()
+    cursor.close()
+    return trips
+
+def get_user_recent_activity(user_id):
+    """Get recent booking activity for a user"""
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        SELECT id, ticket_type, source, destination, departure_date, created_at
+        FROM bookings
+        WHERE user_id = %s
+        ORDER BY created_at DESC
+        LIMIT 5
+        """,
+        (user_id,)
+    )
+    activities = cursor.fetchall()
+    cursor.close()
+    return activities
+
+def create_notification(user_id, title, message, notification_type='info'):
+    """Create a notification for a user"""
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        INSERT INTO notifications (user_id, title, message, type, is_read, created_at)
+        VALUES (%s, %s, %s, %s, 0, NOW())
+        """,
+        (user_id, title, message, notification_type)
+    )
+    mysql.connection.commit()
+    cursor.close()
+
+def get_user_notifications(user_id, limit=5):
+    """Get notifications for a user"""
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        SELECT id, title, message, type, is_read, created_at
+        FROM notifications
+        WHERE user_id = %s
+        ORDER BY created_at DESC
+        LIMIT %s
+        """,
+        (user_id, limit)
+    )
+    notifications = cursor.fetchall()
+    cursor.close()
+    return notifications
+
+def mark_notification_as_read(notification_id, user_id):
+    """Mark a notification as read"""
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        "UPDATE notifications SET is_read = 1 WHERE id = %s AND user_id = %s",
+        (notification_id, user_id)
+    )
+    mysql.connection.commit()
+    cursor.close()
+
+
+def get_total_bookings_count():
+    """Get total count of all bookings"""
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT COUNT(*) FROM bookings")
+    count = cursor.fetchone()[0]
+    cursor.close()
+    return count
+
+
+def create_feedback(user_id, rating, category, subject, message):
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        INSERT INTO feedbacks (user_id, rating, category, subject, message) 
+        VALUES (%s, %s, %s, %s, %s)
+        """,
+        (user_id, rating, category, subject, message)
+    )
+    mysql.connection.commit()
+    cursor.close()
+
+def get_user_feedbacks(user_id):
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        SELECT id, rating, category, subject, message, created_at
+        FROM feedbacks 
+        WHERE user_id = %s 
+        ORDER BY created_at DESC
+        """,
+        (user_id,)
+    )
+    feedbacks = cursor.fetchall()
+    cursor.close()
+    return feedbacks
+
+
+
+def get_monthly_revenue():
+    cursor = mysql.connection.cursor()
+    cursor.execute("""
+        SELECT IFNULL(SUM(fare), 0) FROM bookings
+        WHERE YEAR(created_at) = YEAR(CURDATE())
+        AND MONTH(created_at) = MONTH(CURDATE())
+    """)
+    revenue = cursor.fetchone()[0]
+    cursor.close()
+    return revenue
+
+
+def create_announcement(announcement_type, title, message):
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        INSERT INTO announcements (type, title, message) 
+        VALUES (%s, %s, %s)
+        """,
+        (announcement_type, title, message)
+    )
+    mysql.connection.commit()
+    cursor.close()
+
+def get_all_announcements():
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        SELECT id, type, title, message, created_at
+        FROM announcements 
+        WHERE status = 'active'
+        ORDER BY created_at DESC
+        """
+    )
+    announcements = cursor.fetchall()
+    cursor.close()
+    return announcements
+
+def delete_announcement(announcement_id):
+    cursor = mysql.connection.cursor()
+    cursor.execute("DELETE FROM announcements WHERE id=%s", (announcement_id,))
+    mysql.connection.commit()
+    cursor.close()
+
+def get_user_total_points(user_id):
+    """Get total reward points for a user"""
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        SELECT SUM(points) FROM bookings
+        WHERE user_id = %s
+        """,
+        (user_id,)
+    )
+    total_points = cursor.fetchone()[0] or 0
+    cursor.close()
+    return total_points
+
+def redeem_points(user_id, points_to_deduct):
+    """Deduct points after successful redemption"""
+    cursor = mysql.connection.cursor()
+    # This assumes points are not stored separately; we just deduct by updating a redemption log or similar.
+    # For simplicity, we'll insert a redemption record and assume points are calculated on-the-fly.
+    cursor.execute(
+        """
+        INSERT INTO redemptions (user_id, points_redeemed, amount, created_at)
+        VALUES (%s, %s, %s, NOW())
+        """,
+        (user_id, points_to_deduct, 100)  # 500 points = ৳100
+    )
+    mysql.connection.commit()
+    cursor.close()
+
+# Note: You'll need to create a 'redemptions' table in your database.
+# Run this SQL: CREATE TABLE redemptions (id INT AUTO_INCREMENT PRIMARY KEY, user_id INT, points_redeemed INT, amount DECIMAL(10,2), created_at DATETIME);
+
+
+def add_favorite_destination(user_id, destination_name, station_code):
+    """Add a favorite destination for a user"""
+    cursor = mysql.connection.cursor()
+    try:
+        # Check if the favorite already exists
+        cursor.execute(
+            "SELECT id FROM user_favorites WHERE user_id = %s AND station_code = %s",
+            (user_id, station_code)
+        )
+        existing = cursor.fetchone()
+        
+        if existing:
+            raise Exception("This station is already in your favorites!")
+        
+        cursor.execute(
+            """
+            INSERT INTO user_favorites (user_id, destination_name, station_code)
+            VALUES (%s, %s, %s)
+            """,
+            (user_id, destination_name, station_code)
+        )
+        mysql.connection.commit()
+    except Exception as e:
+        mysql.connection.rollback()
+        raise e
+    finally:
+        cursor.close()
+
+def get_user_favorite_destinations(user_id):
+    """Get user's favorite destinations"""
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        SELECT id, destination_name, station_code, created_at
+        FROM user_favorites
+        WHERE user_id = %s
+        ORDER BY created_at DESC
+        LIMIT 3
+        """,
+        (user_id,)
+    )
+    favorites = cursor.fetchall()
+    cursor.close()
+    return favorites
+
+def remove_favorite_destination(user_id, favorite_id):
+    """Remove a favorite destination"""
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        "DELETE FROM user_favorites WHERE id = %s AND user_id = %s",
+        (favorite_id, user_id)
+    )
+    mysql.connection.commit()
+    cursor.close()
+
+
+
+def update_user_language(user_id, language):
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        "UPDATE users SET preferred_language = %s WHERE id = %s",
+        (language, user_id)
+    )
+    mysql.connection.commit()
+    cursor.close()
+
+def get_user_language(user_id):
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        "SELECT preferred_language FROM users WHERE id = %s",
+        (user_id,)
+    )
+    result = cursor.fetchone()
+    cursor.close()
+    return result[0] if result else 'en'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

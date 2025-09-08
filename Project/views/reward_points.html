@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reward Points - Dhaka Metro Rail</title>
+    <style>
+        /* Theme inspired by front.html: Modern, green accents */
+        body { font-family: Arial, sans-serif; background-color: #f8fafc; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #059669; text-align: center; }
+        .points-balance { text-align: center; font-size: 48px; color: #047857; margin: 20px 0; }
+        .btn { background-color: #059669; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        .btn:disabled { background-color: grey; }
+        .terms { margin: 20px 0; padding: 10px; background: #e6f4f1; border-left: 5px solid #059669; }
+        .modal { display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); }
+        .modal-content { background-color: #fff; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 400px; border-radius: 8px; }
+        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .payment-header { text-align: center; margin-bottom: 20px; }
+        .payment-title { font-size: 20px; color: #059669; }
+        .payment-amount { font-size: 24px; color: #047857; }
+        .payment-method { padding: 10px; border: 1px solid #ddd; margin: 10px 0; cursor: pointer; border-radius: 5px; }
+        .payment-method.selected { border-color: #059669; background: #e6f4f1; }
+        .payment-buttons { display: flex; justify-content: space-between; margin-top: 20px; }
+        .btn-cancel { background: #ccc; }
+        .btn-pay { background: #059669; }
+             header {
+      background: var(--surface);
+      padding: 15px 30px;
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+      backdrop-filter: blur(10px);
+    }
+    
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .logo-section img {
+      height: 50px;
+      width: auto;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.1));
+      animation: logoFloat 3s ease-in-out infinite;
+    }
+    
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+    }
+    
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .back-btn {
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 8px 16px;
+      border-radius: 25px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .back-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    .back-btn:hover {
+      color: var(--brand);
+      background: var(--brand-light);
+      transform: translateY(-2px);
+    }
+    
+    .back-btn:hover::before {
+      left: 100%;
+    }
+    
+
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 30px;
+    }
+    footer {
+      background: linear-gradient(135deg, var(--surface) 0%, var(--brand-light) 100%);
+      text-align: center;
+      padding: 30px;
+      border-top: 1px solid var(--border);
+    }
+    
+    footer p {
+      font-weight: 500;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+    
+
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 20px;
+      }
+    } 
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    </style>
+</head>
+  <header>
+    <div class="header-content">
+      <div class="logo-section">
+        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-RCmcphX4mo26kjSE8kGXPrxOFmO8sM.png" alt="Metro Rail Logo">
+        <div class="logo-text">MetroRail</div>
+      </div>
+      <a class="back-btn" href="{{ url_for('main_routes.home') }}">🏠 Back to Home</a>
+    </div>
+  </header>
+<body>
+    <div class="container">
+        <h1>🚊 Earn Rewards with Every Ride!</h1>
+        <p style="text-align: center;">Experience the future of urban transportation! Earn points on bookings, redeem for cash, and enjoy seamless travel.</p>
+        
+        <div class="points-balance">
+            Your Points: {{ total_points }}
+        </div>
+        
+        <button class="btn" id="redeemBtn" {% if total_points < 500 %}disabled{% endif %}>Redeem 500 Points for ৳100</button>
+        
+        <div class="terms">
+            <h3>Terms and Conditions</h3>
+            <ul>
+                <li>Earn 10 points for each ticket booking.</li>
+                <li>Redeem 500 points for ৳100 cash via mobile banking or card.</li>
+                <li>Points expire after 12 months of account inactivity.</li>
+                <li>Minimum 500 points required for any redemption.</li>
+                <li>Points are non-transferable and cannot be combined with other users.</li>
+                <li>Redemptions are processed within 48 hours; subject to verification.</li>
+                <li>Dhaka Metro Rail reserves the right to modify the program at any time.</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Payment Modal (Improved with better UX) -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePaymentModal()">&times;</span>
+            <div class="payment-header">
+                <div class="payment-title">Redeem Your Rewards</div>
+                <div class="payment-amount">৳100</div>
+            </div>
+            
+            <div class="payment-methods">
+                <div class="payment-method selected" onclick="selectPaymentMethod(this, 'bkash')">
+                    <input type="radio" name="paymentMethod" value="bkash" checked>
+                    <span>bKash</span>
+                </div>
+                <div class="payment-method" onclick="selectPaymentMethod(this, 'nagad')">
+                    <input type="radio" name="paymentMethod" value="nagad">
+                    <span>Nagad</span>
+                </div>
+                <div class="payment-method" onclick="selectPaymentMethod(this, 'rocket')">
+                    <input type="radio" name="paymentMethod" value="rocket">
+                    <span>Rocket</span>
+                </div>
+                <div class="payment-method" onclick="selectPaymentMethod(this, 'card')">
+                    <input type="radio" name="paymentMethod" value="card">
+                    <span>Credit/Debit Card</span>
+                </div>
+            </div>
+            
+            <div class="payment-buttons">
+                <button type="button" class="btn btn-cancel" onclick="closePaymentModal()">Cancel</button>
+                <button type="button" class="btn btn-pay" onclick="processPayment()">Redeem Now</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById("paymentModal");
+        const redeemBtn = document.getElementById("redeemBtn");
+
+        redeemBtn.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        function closePaymentModal() {
+            modal.style.display = "none";
+        }
+
+        function selectPaymentMethod(element, value) {
+            document.querySelectorAll('.payment-method').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            element.querySelector('input').checked = true;
+        }
+
+        function processPayment() {
+            // Simulate API call to redeem
+            fetch('/redeem_points', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        location.reload();  // Refresh to update points
+                    } else {
+                        alert(data.error);
+                    }
+                    closePaymentModal();
+                })
+                .catch(error => {
+                    alert('Error processing redemption: ' + error);
+                    closePaymentModal();
+                });
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closePaymentModal();
+            }
+        }
+    </script>
+  <footer>
+    <p>🚊 © 2025 Metro Rail Authority - Connecting Communities, Powering Progress</p>
+  </footer>
+</body>
+</html>
+</body>
+</html>

@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{ session.get('theme') }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Metro Rail Management System</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+    
+    :root {
+      --bg: #f8fafc;
+      --text: #1e293b;
+      --muted: #64748b;
+      --brand: #059669;
+      --brand-600: #047857;
+      --brand-light: #d1fae5;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --warn: #f59e0b;
+      --good: #10b981;
+      --accent: #ef4444;
+      --gradient-start: #059669;
+      --gradient-end: #34d399;
+    }
+    
+    html[data-theme="dark"] {
+      --bg: #0f172a;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --brand: #34d399;
+      --brand-600: #10b981;
+      --brand-light: #064e3b;
+      --surface: #1e293b;
+      --border: #334155;
+      --warn: #fbbf24;
+      --good: #34d399;
+      --accent: #f87171;
+      --gradient-start: #34d399;
+      --gradient-end: #059669;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    
+    
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+      opacity: 0.03;
+      z-index: -1;
+      animation: gradientShift 8s ease-in-out infinite alternate;
+    }
+    
+    @keyframes gradientShift {
+      0% { transform: translateX(-50px) translateY(-30px) rotate(0deg); }
+      100% { transform: translateX(50px) translateY(30px) rotate(2deg); }
+    }
+    
+    /* Header */
+    header {
+      background: var(--surface);
+      padding: 15px 30px;
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+    
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .logo-section img {
+      height: 50px;
+      width: auto;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.1));
+      animation: logoFloat 3s ease-in-out infinite;
+    }
+    
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+    }
+    
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    nav {
+      display: flex;
+      gap: 30px;
+    }
+    
+    nav a {
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 8px 16px;
+      border-radius: 25px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    nav a::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    nav a:hover {
+      color: var(--brand);
+      background: var(--brand-light);
+      transform: translateY(-2px);
+    }
+    
+    nav a:hover::before {
+      left: 100%;
+    }
+    
+   
+    .hero {
+      padding: 80px 30px;
+      text-align: center;
+      background: linear-gradient(135deg, var(--surface) 0%, var(--brand-light) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(5,150,105,0.1) 0%, transparent 70%);
+      animation: heroRotate 20s linear infinite;
+    }
+    
+    @keyframes heroRotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: titlePulse 2s ease-in-out infinite alternate;
+    }
+    
+    @keyframes titlePulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.02); }
+    }
+    
+    .hero p {
+      font-size: 1.3rem;
+      color: var(--muted);
+      margin-bottom: 40px;
+      font-weight: 400;
+      animation: fadeInUp 1s ease-out 0.5s both;
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .hero-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeInUp 1s ease-out 0.8s both;
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 15px 30px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      border: 2px solid var(--brand);
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--brand), var(--brand-600));
+      color: white;
+      box-shadow: 0 8px 25px rgba(5,150,105,0.3);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(5,150,105,0.4);
+    }
+    
+    .btn-outline {
+      background: transparent;
+      color: var(--brand);
+    }
+    
+    .btn-outline:hover {
+      background: var(--brand);
+      color: white;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(5,150,105,0.3);
+    }
+    
+    
+    .announcements {
+      padding: 60px 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .section-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 50px;
+      color: var(--text);
+      position: relative;
+    }
+    
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--brand), var(--accent));
+      border-radius: 2px;
+    }
+    
+    .announcement {
+      border: 1px solid var(--border);
+      padding: 25px;
+      margin-bottom: 20px;
+      border-radius: 15px;
+      background: var(--surface);
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .announcement::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 100%;
+      background: linear-gradient(180deg, var(--brand), var(--accent));
+    }
+    
+    .announcement:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    
+    .announcement strong {
+      color: var(--brand);
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+    
+    .announcement small {
+      color: var(--muted);
+      font-style: italic;
+    }
+    
+   
+    .quick-actions {
+      padding: 60px 30px;
+      background: var(--surface);
+      margin: 40px 0;
+    }
+    
+    .actions-grid {
+      display: grid;
+      gap: 25px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .action {
+      background: linear-gradient(135deg, var(--surface) 0%, var(--brand-light) 100%);
+      padding: 30px;
+      text-align: center;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .action::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(5,150,105,0.1) 0%, transparent 70%);
+      transform: scale(0);
+      transition: transform 0.5s ease;
+    }
+    
+    .action:hover::before {
+      transform: scale(1);
+    }
+    
+    .action:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+      border-color: var(--brand);
+    }
+    
+    .action a {
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 600;
+      font-size: 1.2rem;
+      position: relative;
+      z-index: 2;
+      display: block;
+    }
+    
+    .action-icon {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      display: block;
+      animation: iconBounce 2s ease-in-out infinite;
+    }
+    
+    @keyframes iconBounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-10px); }
+      60% { transform: translateY(-5px); }
+    }
+    
+    
+    footer {
+      background: linear-gradient(135deg, var(--surface) 0%, var(--brand-light) 100%);
+      text-align: center;
+      padding: 40px 30px;
+      margin-top: 60px;
+      border-top: 1px solid var(--border);
+      position: relative;
+    }
+    
+    footer p {
+      font-weight: 500;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+    
+    
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 20px;
+      }
+      
+      nav {
+        gap: 15px;
+      }
+      
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+      
+      .hero p {
+        font-size: 1.1rem;
+      }
+      
+      .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .actions-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .login-container {
+        margin: 20px;
+        padding: 40px 30px;
+      }
+      
+      .theme-toggle,
+      .back-link {
+        top: 15px;
+      }
+      
+      .theme-toggle {
+        right: 15px;
+      }
+      
+      .back-link {
+        left: 15px;
+        font-size: 0.9rem;
+        padding: 8px 16px;
+      }
+    }
+  
+    .theme-toggle {
+      position: relative;
+      top: 2.5x;
+      right: 0;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      color: var(--text);
+      padding: 12px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.3rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px var(--shadow-light);
+      z-index: 100;
+    }
+    
+    .theme-toggle:hover {
+      border-color: var(--brand);
+      transform: scale(1.1) rotate(10deg);
+    } 
+    
+    .page-loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      animation: fadeOut 0.5s ease-out 2s forwards;
+    }
+    
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+  </style>
+</head>
+<body>
+  
+  <div class="page-loader">
+    <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-RCmcphX4mo26kjSE8kGXPrxOFmO8sM.png" alt="Loading..." style="height: 80px; animation: logoFloat 1s ease-in-out infinite;">
+  </div>
+
+  
+  <header>
+    <div class="header-content">
+      <div class="logo-section">
+        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-RCmcphX4mo26kjSE8kGXPrxOFmO8sM.png" alt="Metro Rail Logo">
+        <div class="logo-text">MetroRail</div>
+      </div>
+      <nav>
+        <a href="{{ url_for('main_routes.welcome_tour') }}">✈️ Welcome Tour</a>
+        <a href="#">📅 Schedules</a>
+        <a href="{{ url_for('main_routes.admin_login') }}">⬛ Admin</a>
+        <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+      </nav>
+    </div>
+  </header>
+
+  
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Seamless City Journeys, Every Day! 🚊</h1>
+      <p>Experience the future of urban transportation! Book tickets instantly, track schedules in real-time, earn amazing rewards, and stay connected — all in one powerful platform.</p>
+      <div class="hero-buttons">
+        <a href="{{ url_for('main_routes.auth') }}">
+           <button class="btn btn-primary" type="button">🚀 Book Now</button>
+        </a>
+
+        <a href="{{ url_for('main_routes.auth') }}">
+        <button class="btn btn-outline" type="button">✨ Create Account</button>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+
+ <section class="announcements">
+    <h2 class="section-title">📢 Latest Announcements</h2>
+    {% if announcements %}
+        {% for announcement in announcements %}
+        <div class="announcement">
+            <strong>{{ announcement[1] }}:</strong> {{ announcement[2] }} - {{ announcement[3] }}
+            <br><small>📅 {{ announcement[4].strftime('%B %d, %Y') if announcement[4] else 'No date' }}</small>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="announcement">
+            <strong>Welcome!</strong> No announcements at this time. Check back later for updates.
+            <br><small>📅 System Message</small>
+        </div>
+    {% endif %}
+</section>
+
+
+  <section class="quick-actions">
+    <h2 class="section-title">⚡ Quick Actions</h2>
+    <div class="actions-grid">
+      <div class="action">
+        <a href="#">
+          <span class="action-icon">🎫</span>
+          Book Tickets
+        </a>
+      </div>
+      <div class="action">
+        <a href="{{ url_for('main_routes.fare_calculator') }}">
+          <span class="action-icon">💰</span>
+          Fare Calculator
+        </a>
+      </div>
+      <div class="action">
+        <a href="{{ url_for('main_routes.train_schedule') }}">
+          <span class="action-icon">🕒</span>
+          Train Schedules
+        </a>
+      </div>
+      <div class="action">
+        <a href="{{ url_for('main_routes.time_calculator') }}">
+          <span class="action-icon">⌛</span>
+          Time calculator
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <footer>
+    <p>🚊 © 2025 Metro Rail Authority - Connecting Communities, Powering Progress</p>
+  </footer>
+
+  <script>
+      // Theme Toggle
+    function toggleTheme() {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', newTheme);
+      
+      const themeToggle = document.querySelector('.theme-toggle');
+      themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth'
+            });
+          }
+        });
+      });
+      
+
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+      
+      const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.animation = 'fadeInUp 0.6s ease-out forwards';
+          }
+        });
+      }, observerOptions);
+      
+      document.querySelectorAll('.announcement, .action').forEach(el => {
+        observer.observe(el);
+      });
+    });
+  </script>
+</body>
+</html>

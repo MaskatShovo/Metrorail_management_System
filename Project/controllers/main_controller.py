@@ -841,6 +841,18 @@ def feedback():
 def welcome_tour():
     return render_template("welcome_tour.html")
 
+@main_routes.route("/w2", methods=["GET", "POST"])
+def w2():
+    return render_template("w2.html")
+
+@main_routes.route("/w3", methods=["GET", "POST"])
+def w3():
+    return render_template("w3.html")
+
+@main_routes.route("/w4", methods=["GET", "POST"])
+def w4():
+    return render_template("w4.html")
+
 
 
 

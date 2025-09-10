@@ -467,11 +467,6 @@
           <button class="btn btn-outline btn-small" onclick="downloadReceipt('MR{{ booking.id }}')">
             📄 Download Receipt
           </button>
-          {% if booking.status == 'upcoming' %}
-            <button class="btn btn-outline btn-small" onclick="cancelTicket('MR{{ booking.id }}')">
-              ❌ Cancel
-            </button>
-          {% endif %}
         </div>
       </div>
     </div>
@@ -488,7 +483,7 @@
 </div>
 
 <script>
-
+// Get real ticket data from Flask
 const realTickets = [
   {% for booking in bookings %}
   {
@@ -523,7 +518,8 @@ function filterTickets() {
   if (status) {
     filtered = filtered.filter(ticket => ticket.status === status);
   }
-
+  
+  // Hide/show tickets based on filter
   const ticketCards = document.querySelectorAll('.ticket-card');
   const emptyState = document.getElementById('emptyState');
   let visibleCount = 0;
@@ -545,20 +541,12 @@ function filterTickets() {
 }
 
 function downloadReceipt(ticketId) {
-
+    // Extract booking ID from ticket ID (remove 'MR' prefix)
     const bookingId = ticketId.replace('MR', '');
     window.location.href = `/download_receipt/${bookingId}`;
 }
 
-function cancelTicket(ticketId) {
-  if (confirm(`Are you sure you want to cancel ticket ${ticketId}?\n\nThis action cannot be undone.`)) {
-
-    alert(`✅ Ticket ${ticketId} has been cancelled successfully.\n\nRefund will be processed within 3-5 business days.`);
-    location.reload(); 
-  }
-}
-
-
+// Show empty state if no bookings
 {% if not bookings %}
 document.getElementById('emptyState').style.display = 'block';
 document.getElementById('ticketsGrid').style.display = 'none';
@@ -566,9 +554,3 @@ document.getElementById('ticketsGrid').style.display = 'none';
 </script>
 </body>
 </html>
-
-
-
-
-
-

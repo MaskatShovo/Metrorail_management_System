@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metro Rail - Manage Profile</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+        
+        :root {
+            --bg: #f8fafc;
+            --text: #1e293b;
+            --muted: #64748b;
+            --brand: #7c3aed;
+            --brand-600: #6d28d9;
+            --brand-light: #ede9fe;
+            --surface: #ffffff;
+            --border: #e2e8f0;
+            --accent: #ec4899;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            max-width: 900px;
+            padding: 40px;
+            text-align: center;
+            background: var(--surface);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin: 20px;
+        }
+        
+        .profile-image {
+            width: 100%;
+            max-width: 500px;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease;
+        }
+        
+        .profile-image:hover {
+            transform: scale(1.02);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--brand), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .description {
+            font-size: 1.2rem;
+            color: var(--muted);
+            margin-bottom: 30px;
+            font-weight: 400;
+        }
+        
+        .instructions {
+            text-align: left;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            background: var(--brand-light);
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 5px solid var(--brand);
+        }
+        
+        .instructions h3 {
+            color: var(--brand);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .instruction-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            color: var(--text);
+        }
+        
+        .instruction-number {
+            background: var(--brand);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 12px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        
+        .manage-profile-btn {
+            display: inline-block;
+            padding: 18px 40px;
+            background: linear-gradient(135deg, var(--brand), var(--brand-600));
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(124,58,237,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .manage-profile-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .manage-profile-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(124,58,237,0.4);
+        }
+        
+        .manage-profile-btn:hover::before {
+            left: 100%;
+        }
+        
+        .manage-profile-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .container > * {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        
+        .container > *:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .container > *:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        .container > *:nth-child(4) {
+            animation-delay: 0.6s;
+        }
+        
+        .container > *:nth-child(5) {
+            animation-delay: 0.8s;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .description {
+                font-size: 1.1rem;
+            }
+            
+            .instructions {
+                padding: 20px;
+                text-align: left;
+            }
+            
+            .manage-profile-btn {
+                padding: 15px 30px;
+                font-size: 1.1rem;
+            }
+            
+            .profile-image {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- <img src="manage_profile.jpg" alt="Manage Profile" class="profile-image"> -->
+        <img src="{{ url_for('static', filename='images/manage.png') }}" alt="Manage Profile" class="profile-image">
+        <h1>Manage Your Profile</h1>
+        <p class="description">Keep your Metro Rail account up-to-date with personalized settings and preferences for the best travel experience.</p>
+        
+        <div class="instructions">
+            <h3>Profile Management Steps:</h3>
+            <div class="instruction-item">
+                <div class="instruction-number">1</div>
+                <div>Update your personal information including name, email, and contact details</div>
+            </div>
+            <div class="instruction-item">
+                <div class="instruction-number">2</div>
+                <div>Set your travel preferences and favorite routes for quick access</div>
+            </div>
+            <div class="instruction-item">
+                <div class="instruction-number">3</div>
+                <div>Manage payment methods and billing information securely</div>
+            </div>
+            <div class="instruction-item">
+                <div class="instruction-number">4</div>
+                <div>Configure notification settings for trip updates and alerts</div>
+            </div>
+            <div class="instruction-item">
+                <div class="instruction-number">5</div>
+                <div>Review your travel history and manage saved locations</div>
+            </div>
+        </div>
+        
+        <button class="manage-profile-btn" onclick="window.location.href='/'">Finish</button>
+ 
+    </div>
+
+    <script>
+        function handleManageProfile() {
+            // Add a smooth click animation
+            const btn = document.querySelector('.manage-profile-btn');
+            btn.style.transform = 'scale(0.95)';
+            
+            setTimeout(() => {
+                btn.style.transform = '';
+                // You can add your navigation logic here
+                alert('Redirecting to your profile management dashboard...');
+                // Example: window.location.href = '/profile';
+            }, 150);
+        }
+
+        // Add smooth scroll behavior and entrance animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add a subtle parallax effect to the image
+            const profileImage = document.querySelector('.profile-image');
+            
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                profileImage.style.transform = `translateY(${scrolled * 0.1}px)`;
+            });
+            
+            // Add keyboard support for the button
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && document.activeElement.classList.contains('manage-profile-btn')) {
+                    handleManageProfile();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

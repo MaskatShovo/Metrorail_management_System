@@ -615,17 +615,17 @@
         return;
       }
       
-      
+      // Calculate distance-based fare
       const distance = Math.abs(getStationIndex(fromStation) - getStationIndex(toStation));
       const baseFare = baseFares[travelClass] * distance;
       let totalFare = baseFare * passengers;
       
-      
+      // Apply return discount
       if (ticketType === 'return') {
         totalFare *= 1.8; // 10% discount on return
       }
       
-      
+      // Calculate breakdown
       const singleFare = baseFare;
       const classMultiplier = baseFares[travelClass] / baseFares['standard'];
       
@@ -674,11 +674,10 @@
       `;
     }
 
-    
+    // Initialize with default calculation if stations are selected
     document.addEventListener('DOMContentLoaded', function() {
       calculateFare();
     });
   </script>
 </body>
 </html>
-

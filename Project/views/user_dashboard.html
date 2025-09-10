@@ -1,0 +1,37 @@
+<!-- views/user_dashboard.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>User Dashboard</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; background: #f7f7fb; }
+    .wrap { max-width: 980px; margin: 32px auto; padding: 0 16px; }
+    .h1 { font-size: 24px; font-weight: 700; margin-bottom: 16px; }
+    .list { display: grid; gap: 12px; }
+    .item { background: #fff; border-radius: 12px; border: 1px solid #eee; padding: 12px 16px; display: grid; grid-template-columns: 1fr auto; align-items: center; }
+    .muted { color: #666; font-size: 12px; }
+    .big { font-size: 16px; font-weight: 600; }
+    .status-badge { padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; border: 1px solid #cfe3ff; background: #eef6ff; color: #0b5cd5; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="h1">Upcoming Trips</div>
+    <div class="list">
+      {% for t in trips %}
+      <div class="item">
+        <div>
+          <div class="big">{{ t.source }} → {{ t.destination }}</div>
+          <div class="muted">Departs {{ t.departure_date }} • Class {{ t.travel_class }} • {{ t.passengers }} pax</div>
+        </div>
+        <span class="status-badge">{{ (t.status or 'Booked').title() }}</span>
+      </div>
+      {% else %}
+      <div class="muted">No upcoming trips.</div>
+      {% endfor %}
+    </div>
+  </div>
+</body>
+</html>

@@ -560,7 +560,7 @@
   </div>
 
   <script>
-    
+    // Set default date to today and current time
     document.getElementById('date').valueAsDate = new Date();
     const now = new Date();
     const currentTime = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
@@ -639,17 +639,17 @@
         return;
       }
       
-      
+      // Calculate metro journey time
       const stationDistance = Math.abs(getStationIndex(fromStation) - getStationIndex(toStation));
-      const travelTimeMinutes = stationDistance * 3; 
+      const travelTimeMinutes = stationDistance * 3; // 3 minutes per station
       
-      
+      // Waiting time for metro (platform + boarding)
       const hour = parseInt(time.split(':')[0]);
-      let waitingTime = 5; 
+      let waitingTime = 5; // Base waiting time
       
       // Peak hours: longer waiting times
       if ((hour >= 7 && hour <= 10) || (hour >= 17 && hour <= 20)) {
-        waitingTime = 8; 
+        waitingTime = 8; // Peak hour waiting
       }
       
       const totalMinutes = travelTimeMinutes + waitingTime + buffer;
@@ -706,7 +706,7 @@
       calculateTravel();
     });
     
-    
+    // Real-time calculation on input change
     document.querySelectorAll('input, select').forEach(element => {
       element.addEventListener('change', function() {
         if (document.getElementById('fromStation').value && 
@@ -718,6 +718,4 @@
     });
   </script>
 </body>
-
 </html>
-

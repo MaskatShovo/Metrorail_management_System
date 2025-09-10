@@ -394,7 +394,7 @@
       }
     }
     
-
+    /* Loading state */
     .loading {
       opacity: 0.7;
       pointer-events: none;
@@ -425,22 +425,22 @@
   </style>
 </head>
 <body>
-
+  <!-- Theme Toggle -->
   <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
   
-
+  <!-- Back Link -->
   <a href="/" class="back-link">← Back to Home</a>
 
-
+  <!-- Login Container -->
   <div class="login-container">
-
+    <!-- Logo Section -->
     <div class="logo-section">
       <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-RCmcphX4mo26kjSE8kGXPrxOFmO8sM.png" alt="Metro Rail Logo">
       <div class="logo-text">MetroRail</div>
       <div class="admin-badge">Admin Portal</div>
     </div>
 
-
+    <!-- Flash Messages -->
     <div id="alertContainer">
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -565,6 +565,4 @@
     });
   </script>
 </body>
-
 </html>
-

@@ -21,7 +21,7 @@
             overflow-x: hidden;
         }
 
-        
+        /* Animated Background Particles */
         .particles {
             position: fixed;
             top: 0;
@@ -1047,6 +1047,22 @@
             margin: 0;
             font-style: italic;
         }
+    
+        /* Collapsible Reward Points */
+        .collapsible summary {
+            list-style: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .collapsible summary::-webkit-details-marker { display: none; }
+        .notifications-list {
+            max-height: 360px;   /* Adjust as needed */
+            overflow-y: auto;
+            padding-right: .25rem;
+        }
+
     </style>
 </head>
 <body>
@@ -1160,7 +1176,7 @@
                                     <button class="quick-book-btn" onclick="quickBook('{{ favorite[2] }}', '{{ favorite[1] }}')">
                                         Quick Book
                                     </button>
-                                    <button class="remove-favorite-btn" onclick="removeFavoriteFromDB({{ favorite[0] }})">
+                                    <button class="remove-favorite-btn" onclick="removeFavoriteFromDB('{{ favorite[0] }}')">
                                         ×
                                     </button>
                                 </div>
@@ -1215,15 +1231,15 @@
                 </div>
             </div>
 
-            <!-- Notifications Card -->
-            <div class="dashboard-card scroll-animate">
-                <div class="card-header">
-                    <h3>🔔 Notifications</h3>
+            <!-- Reward Points (collapsible) -->
+            <details id="reward-points" class="dashboard-card scroll-animate collapsible" open>
+                <summary class="card-header">
+                    <h3>🔔 Reward Points</h3>
                     {% if notifications %}
                         <span class="notification-count">{{ notifications|length }}</span>
                     {% endif %}
-                </div>
-                <div class="card-content">
+                </summary>
+                <div class="card-content notifications-list">
                     {% if notifications %}
                         {% for notification in notifications %}
                         <div class="notification-item {% if not notification[4] %}unread{% endif %}">
@@ -1233,17 +1249,17 @@
                                 <span class="notification-time">{{ notification[5].strftime('%b %d, %H:%M') }}</span>
                             </div>
                             {% if not notification[4] %}
-                            <button class="mark-read-btn" onclick="markAsRead({{ notification[0] }})">✓</button>
+                            <button class="mark-read-btn" onclick="markAsRead('{{ notification[0] }}')">✓</button>
                             {% endif %}
                         </div>
                         {% endfor %}
                     {% else %}
                         <div class="no-data">
-                            <p>No new notifications</p>
+                            <p>No recent reward activity</p>
                         </div>
                     {% endif %}
                 </div>
-            </div>
+            </details>
         </div>
 
         <!-- Navigation Section -->
@@ -1483,6 +1499,12 @@
         });
         // Load saved theme
         document.addEventListener('DOMContentLoaded', function() {
+            const rp = document.getElementById('reward-points');
+            if (rp) {
+                const saved = localStorage.getItem('reward-points-open');
+                if (saved !== null) rp.open = saved === '1';
+                rp.addEventListener('toggle', () => localStorage.setItem('reward-points-open', rp.open ? '1' : '0'));
+            }
             const savedTheme = localStorage.getItem('theme') || 'light';
             document.documentElement.setAttribute('data-theme', savedTheme);
             const themeToggle = document.querySelector('.theme-toggle');
